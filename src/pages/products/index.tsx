@@ -1,9 +1,9 @@
 import useSWR from 'swr';
-import Head from 'next/head.js';
-import { fetcher } from '@/helpers/fetcher.js';
+import Head from 'next/head';
+import { fetcher } from '@/helpers';
 
 export default function Products() {
-  const { data, error } = useSWR('/products', fetcher);
+  const { data, error } = useSWR('http://127.0.0.1:3001/products', fetcher);
 
   if (error) {
     return <h1>Failed to load products</h1>;

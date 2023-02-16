@@ -2,6 +2,7 @@
   "name": "eshop-2.0-react",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -23,6 +24,5 @@
   },
   "devDependencies": {
     "prettier": "^2.8.4"
-  },
-  "proxy": "http://localhost:3001"
+  }
 }
