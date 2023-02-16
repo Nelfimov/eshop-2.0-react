@@ -11,13 +11,17 @@ export function Navbar() {
   return (
     <MDBNavbar expand="md" bgColor="light">
       <MDBContainer>
-        <MDBNavbarBrand href="/">Jetzt ist die beste Zeit</MDBNavbarBrand>
-        <MDBNavbarNav right fullWidth={false} className="gap-3">
+        <MDBNavbarBrand href="/">JETZT IST DIE BESTE ZEIT</MDBNavbarBrand>
+        <MDBNavbarNav right fullWidth={false}>
           <MDBNavbarItem>
-            <Link href="/">Home</Link>
+            <Link href="/" className="nav-link">
+              Home
+            </Link>
           </MDBNavbarItem>
           <MDBNavbarItem>
-            <Link href="/products">Catalogue</Link>
+            <Link href="/products" className="nav-link">
+              Catalogue
+            </Link>
           </MDBNavbarItem>
         </MDBNavbarNav>
       </MDBContainer>

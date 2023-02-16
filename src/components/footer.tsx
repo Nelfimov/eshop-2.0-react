@@ -3,9 +3,11 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <MDBFooter bgColor="light">
-      <MDBContainer className="text-center py-3">
-        <Link href="https://github.com/nelfimov/">GitHub</Link>
+    <MDBFooter bgColor="secondary">
+      <MDBContainer className="text-center p-3">
+        <Link className="text-light" href="https://github.com/nelfimov/">
+          GitHub
+        </Link>
       </MDBContainer>
     </MDBFooter>
   );
