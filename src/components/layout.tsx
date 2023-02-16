@@ -7,7 +7,7 @@ export function Layout({ children }: PropsWithChildren) {
     <>
       <Navbar />
       <main>
-        <MDBContainer>{children}</MDBContainer>
+        <MDBContainer className="my-4">{children}</MDBContainer>
       </main>
       <Footer />
     </>

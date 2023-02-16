@@ -1,6 +1,8 @@
 import useSWR from 'swr';
 import Head from 'next/head';
 import { fetcher } from '@/helpers';
+import { ProductCard } from '@/components';
+import { MDBCol, MDBContainer } from 'mdb-react-ui-kit';
 
 export default function Products() {
   const { data, error } = useSWR('http://127.0.0.1:3001/products', fetcher);
@@ -16,7 +18,12 @@ export default function Products() {
       <Head>
         <title>Products | Jetzt ist die beste Zeit Online Shop</title>
       </Head>
-      <h1>When nothing to be loaded</h1>
+      <MDBContainer className="row row-cols-1 row-cols-md-5 gap-4 justify-content-center">
+        {data &&
+          data.products.map((product: any) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+      </MDBContainer>
     </>
   );
 }
