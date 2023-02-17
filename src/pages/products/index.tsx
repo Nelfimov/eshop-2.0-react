@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import Head from 'next/head';
 import { fetcher } from '@/helpers';
 import { Loader, ProductCard } from '@/components';
-import { MDBContainer } from 'mdb-react-ui-kit';
+import { MDBCol, MDBRow } from 'mdb-react-ui-kit';
 
 export default function Products() {
   const { data, error, isLoading, isValidating } = useSWR(
@@ -18,16 +18,18 @@ export default function Products() {
       <Head>
         <title>Products | Jetzt ist die beste Zeit Online Shop</title>
       </Head>
-      <MDBContainer className="row row-cols-1 row-cols-md-5 gap-4 justify-content-center">
+      <MDBRow className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
         {isLoading || isValidating ? (
           <Loader />
         ) : (
           data &&
           data.products.map((product: any) => (
-            <ProductCard key={product._id} product={product} />
+            <MDBCol key={product._id}>
+              <ProductCard product={product} />
+            </MDBCol>
           ))
         )}
-      </MDBContainer>
+      </MDBRow>
     </>
   );
 }

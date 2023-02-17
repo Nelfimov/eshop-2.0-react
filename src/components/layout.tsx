@@ -7,7 +7,9 @@ export function Layout({ children }: PropsWithChildren) {
     <>
       <Navbar />
       <main>
-        <MDBContainer className="mt-5 mb-3">{children}</MDBContainer>
+        <MDBContainer breakpoint="lg" className="mt-5 mb-3">
+          {children}
+        </MDBContainer>
       </main>
       <Footer />
     </>

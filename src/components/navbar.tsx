@@ -17,7 +17,7 @@ export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
 
   return (
-    <MDBNavbar fixed="top" expand="md" light bgColor="light">
+    <MDBNavbar fixed="top" expand="lg" light bgColor="light">
       <MDBContainer>
         <MDBNavbarBrand href="#">JETZT IST DIE BESTE ZEIT</MDBNavbarBrand>
         <MDBNavbarToggler
