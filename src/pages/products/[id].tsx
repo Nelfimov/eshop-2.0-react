@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { fetcher } from '@/helpers';
 import Head from 'next/head';
 import {
+  MDBIcon,
   MDBBtn,
   MDBCard,
   MDBCardBody,
@@ -68,6 +69,7 @@ export default function Product() {
                   )}
                   <MDBCardText>{product.description}</MDBCardText>
                   <MDBBtn className="m-1" color="success">
+                    <MDBIcon className="me-1" icon="cart-plus" />
                     Add to cart
                   </MDBBtn>
                 </MDBCol>
