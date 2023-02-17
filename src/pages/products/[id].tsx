@@ -20,7 +20,7 @@ import { Product as IProduct } from 'types';
 export default function Product() {
   const router = useRouter();
   const { data, error } = useSWR(
-    `http://localhost:3001/products/${router.query.id}`,
+    router.isReady ? `http://localhost:3001/products/${router.query.id}` : null,
     fetcher
   );
   const product: IProduct = data && data.product;
@@ -28,7 +28,9 @@ export default function Product() {
   return (
     <>
       <Head>
-        <title>{`${router.query.name} | Jetzt ist die beste Zeit Online Shop`}</title>
+        <title>{`${
+          product ? product.name : ''
+        } | Jetzt ist die beste Zeit Online Shop`}</title>
       </Head>
       <MDBCard>
         {error && <h1>Product not found</h1>}

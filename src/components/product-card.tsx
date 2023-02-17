@@ -18,9 +18,7 @@ export function ProductCard({ product }: Props) {
     <MDBCard className="p-0">
       <Link
         className="card-link"
-        href={`/products/${encodeURIComponent(product._id)}/?name=${
-          product.name
-        }`}
+        href={`/products/${encodeURIComponent(product._id)}`}
       >
         <Image
           className="card-img-top"
