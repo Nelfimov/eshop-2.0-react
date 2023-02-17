@@ -9,15 +9,19 @@ interface Props {
 export function ProductBodyImages({ product }: Props) {
   return (
     <MDBCardBody>
-      <MDBRow>
+      <MDBRow className="row-cols-1 row-cols-md-3">
         {product.subImages.map((image, index) => {
           return (
-            <MDBCol size="sm" key={index}>
+            <MDBCol
+              key={index}
+              className="position-relative"
+              style={{ height: '300px' }}
+            >
               <Image
                 src={image}
                 alt={`${product.name}-sub-image-${index}`}
-                width={300}
-                height={500}
+                fill
+                style={{ objectFit: 'contain' }}
               />
             </MDBCol>
           );

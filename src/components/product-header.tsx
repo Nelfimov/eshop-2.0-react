@@ -19,7 +19,7 @@ export function ProductHeader({ product }: Props) {
   return (
     <MDBCardHeader>
       <MDBRow>
-        <MDBCol className="position-relative">
+        <MDBCol className="position-relative" style={{ height: '400px' }}>
           <Image
             src={product.titleImage}
             fill
