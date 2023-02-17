@@ -10,9 +10,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MDBCarousel showControls showIndicators className="rounded-5">
+      <MDBCarousel showControls showIndicators>
         <MDBCarouselItem
-          active
+          active="true"
           itemId={1}
           className="w-100 d-block"
           src="https://mdbootstrap.com/img/new/slides/041.jpg"
