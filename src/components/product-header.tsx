@@ -22,9 +22,8 @@ export function ProductHeader({ product }: Props) {
         <MDBCol className="position-relative">
           <Image
             src={product.titleImage}
-            // width={640}
-            // height={480}
             fill
+            style={{ objectFit: 'contain' }}
             alt={`${product.name}-title-image`}
           />
         </MDBCol>
