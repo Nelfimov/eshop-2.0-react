@@ -20,13 +20,17 @@ export function ProductCard({ product }: Props) {
         className="card-link"
         href={`/products/${encodeURIComponent(product._id)}`}
       >
-        <Image
+        <div
           className="card-img-top"
-          src={product.titleImage}
-          alt={`${product.name}-title-image`}
-          width={200}
-          height={350}
-        />
+          style={{ position: 'relative', height: '200px' }}
+        >
+          <Image
+            className="card-img-top"
+            src={product.titleImage}
+            alt={`${product.name}-title-image`}
+            fill
+          />
+        </div>
         <MDBCardBody>
           <MDBCardTitle>{product.name}</MDBCardTitle>
           {product.deliveryPrice > 0 ? (
@@ -37,9 +41,7 @@ export function ProductCard({ product }: Props) {
                 </MDBTypography>
               </MDBCardTitle>
               <MDBCardTitle style={{ color: 'red' }}>
-                <MDBTypography tag="h4">
-                  €{product.totalPrice.toFixed(2)}
-                </MDBTypography>
+                <MDBTypography>€{product.totalPrice.toFixed(2)}</MDBTypography>
               </MDBCardTitle>
             </>
           ) : (
