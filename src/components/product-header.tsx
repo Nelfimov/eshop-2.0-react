@@ -9,7 +9,7 @@ import {
   MDBBtn,
   MDBIcon,
 } from 'mdb-react-ui-kit';
-import { Product as IProduct } from 'types';
+import { Product as IProduct } from '@/types';
 
 interface Props {
   product: IProduct;

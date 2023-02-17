@@ -1,10 +1,9 @@
 import useSWR from 'swr';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { fetcher } from '@/helpers';
 import Head from 'next/head';
-import { MDBCard, MDBCardBody, MDBCol, MDBRow } from 'mdb-react-ui-kit';
-import { Product as IProduct } from 'types';
+import { MDBCard } from 'mdb-react-ui-kit';
+import { Product as IProduct } from '@/types';
+import { fetcher } from '@/helpers';
 import { Loader, ProductBodyImages, ProductHeader } from '@/components';
 
 export default function Product() {

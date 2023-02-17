@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { MDBCardBody, MDBRow, MDBCol } from 'mdb-react-ui-kit';
-import { Product as IProduct } from 'types';
+import { Product as IProduct } from '@/types';
 
 interface Props {
   product: IProduct;
