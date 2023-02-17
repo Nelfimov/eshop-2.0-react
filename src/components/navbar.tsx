@@ -8,6 +8,8 @@ import {
   MDBNavbarItem,
   MDBNavbarNav,
   MDBNavbarToggler,
+  MDBInput,
+  MDBBtn,
 } from 'mdb-react-ui-kit';
 import { useState } from 'react';
 
@@ -15,7 +17,7 @@ export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
 
   return (
-    <MDBNavbar expand="md" light bgColor="light">
+    <MDBNavbar fixed="top" expand="md" light bgColor="light">
       <MDBContainer>
         <MDBNavbarBrand href="#">JETZT IST DIE BESTE ZEIT</MDBNavbarBrand>
         <MDBNavbarToggler
@@ -51,6 +53,14 @@ export function Navbar() {
                 <MDBIcon className="me-1" icon="sign-in-alt" />
                 Authorize
               </Link>
+            </MDBNavbarItem>
+            <MDBNavbarItem>
+              <form className="d-flex input-group w-auto">
+                <MDBInput type="text" label="Search" id="search" />
+                <MDBBtn color="primary">
+                  <MDBIcon icon="search" />
+                </MDBBtn>
+              </form>
             </MDBNavbarItem>
           </MDBNavbarNav>
         </MDBCollapse>
