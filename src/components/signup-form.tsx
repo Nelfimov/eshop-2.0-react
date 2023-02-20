@@ -5,9 +5,14 @@ import {
   MDBValidation,
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
+import { NextRouter } from 'next/router';
 import React, { FormEvent, useState } from 'react';
 
-export function SignUpForm() {
+interface Props {
+  router: NextRouter;
+}
+
+export function SignUpForm({ router }: Props) {
   const [formInput, setFormInput] = useState({
     email: '',
     password: '',
@@ -16,6 +21,7 @@ export function SignUpForm() {
   const [errors, setErrors] = useState({});
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setErrors({});
     const { name, value } = e.target;
     setFormInput((prev) => {
       return { ...prev, [name]: value };
@@ -34,12 +40,27 @@ export function SignUpForm() {
     if (!validateEmail(formInput.email)) {
       formIsValid = false;
       errors['email'] = 'Should be a valid email address.';
+      const email = document.getElementById('email') as HTMLInputElement;
+      email.setCustomValidity(errors['email']);
     }
     if (formInput.password !== formInput.confirmPassword) {
       formIsValid = false;
       errors['password'] = 'Passwords should match.';
+      const password = document.getElementById('password') as HTMLInputElement;
+      password.setCustomValidity(errors['password']);
+      const confirmPassword = document.getElementById(
+        'password'
+      ) as HTMLInputElement;
+      confirmPassword.setCustomValidity(errors['password']);
     }
-
+    if (formInput.password.length < 5 || formInput.confirmPassword.length < 5) {
+      formIsValid = false;
+      errors['password'] = 'Passwords should be longer than 5 symbols.';
+      const password = document.getElementById(
+        'confirmPassword'
+      ) as HTMLInputElement;
+      password.setCustomValidity(errors['password']);
+    }
     setErrors(errors);
     return formIsValid;
   }
@@ -55,20 +76,9 @@ export function SignUpForm() {
     const { value: password } = document.getElementById(
       'password'
     ) as HTMLInputElement;
-    const { value: confirmPassword } = document.getElementById(
-      'password-confirm'
-    ) as HTMLInputElement;
-
-    if (!email || !password) {
-      return console.error('Email or password not provided');
-    }
-
-    if (!confirmPassword || confirmPassword !== password) {
-      return console.error('Passwords do not match');
-    }
 
     const body = { email, password };
-    const response = await fetch('http://localhost:3001/auth/login', {
+    const response = await fetch('http://localhost:3001/auth/register', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -80,6 +90,7 @@ export function SignUpForm() {
       return console.error(data.message);
     }
     localStorage.setItem('token', data.token);
+    router.push('/');
   }
 
   return (
@@ -102,35 +113,43 @@ export function SignUpForm() {
           required
         />
       </MDBValidationItem>
-      <MDBInput
-        className="mb-4"
-        type="password"
-        name="password"
-        id="password"
-        value={formInput.password}
-        label="Password"
-        onChange={handleChange}
-        minLength={5}
-        required
-      />
       <MDBValidationItem
         // @ts-expect-error: ignore
         feedback={errors['password']}
-        className="mb-2 pb-1"
+        className="mb-3 pb-1"
+        invalid
+      >
+        <MDBInput
+          type="password"
+          name="password"
+          id="password"
+          value={formInput.password}
+          label="Password"
+          onChange={handleChange}
+          required
+        />
+      </MDBValidationItem>
+      <MDBValidationItem
+        // @ts-expect-error: ignore
+        feedback={errors['password']}
+        className="mb-3 pb-1"
         invalid
       >
         <MDBInput
           type="password"
           name="confirmPassword"
-          id="password-confirm"
+          id="confirmPassword"
           value={formInput.confirmPassword}
           label="Confirm password"
           onChange={handleChange}
-          minLength={5}
           required
         />
       </MDBValidationItem>
-      <MDBBtn className="w-100 mt-3" type="submit">
+      <MDBBtn
+        className="w-100 my-3"
+        type="submit"
+        disabled={Object.keys(errors).length > 0}
+      >
         Sign up
       </MDBBtn>
     </MDBValidation>

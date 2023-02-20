@@ -1,7 +1,12 @@
 import { MDBInput, MDBCheckbox, MDBBtn } from 'mdb-react-ui-kit';
+import { NextRouter } from 'next/router';
 import { FormEvent } from 'react';
 
-export function LogInForm() {
+interface Props {
+  router: NextRouter;
+}
+
+export function LogInForm({ router }: Props) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -35,6 +40,7 @@ export function LogInForm() {
     } else {
       sessionStorage.setItem('token', data.token);
     }
+    router.push('/');
   }
 
   return (
@@ -57,7 +63,7 @@ export function LogInForm() {
         required
       />
       <MDBCheckbox name="remember" label="Remember me" id="remember" />
-      <MDBBtn className="w-100 mt-3" type="submit">
+      <MDBBtn className="w-100 my-3" type="submit">
         Log in
       </MDBBtn>
     </form>
