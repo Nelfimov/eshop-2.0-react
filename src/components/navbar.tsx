@@ -11,10 +11,18 @@ import {
   MDBInput,
   MDBBtn,
 } from 'mdb-react-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function Navbar() {
+  const [user, setUser] = useState('');
   const [showNavToggler, setShowNavToggler] = useState(false);
+
+  useEffect(() => {
+    const token =
+      localStorage.getItem('token') ?? sessionStorage.getItem('token');
+    if (!token) return;
+    setUser('Profile');
+  }, []);
 
   return (
     <MDBNavbar fixed="top" expand="lg" light bgColor="light">
@@ -51,7 +59,7 @@ export function Navbar() {
             <MDBNavbarItem>
               <Link href="/auth" className="nav-link">
                 <MDBIcon className="me-1" icon="sign-in-alt" />
-                Authorize
+                {user === '' ? 'Authorize' : user}
               </Link>
             </MDBNavbarItem>
             <MDBNavbarItem>
