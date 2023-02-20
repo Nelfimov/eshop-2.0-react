@@ -1,4 +1,4 @@
-import { MDBContainer, MDBFooter } from 'mdb-react-ui-kit';
+import { MDBContainer, MDBFooter, MDBIcon } from 'mdb-react-ui-kit';
 import Link from 'next/link';
 
 export function Footer() {
@@ -6,7 +6,7 @@ export function Footer() {
     <MDBFooter bgColor="secondary">
       <MDBContainer className="text-center p-3">
         <Link className="text-light" href="https://github.com/nelfimov/">
-          GitHub
+          <MDBIcon icon="github" fab size="3x" alt="github" />
         </Link>
       </MDBContainer>
     </MDBFooter>
