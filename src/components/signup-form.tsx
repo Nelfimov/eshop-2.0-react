@@ -28,7 +28,6 @@ export function SignUpForm() {
         label="Confirm password"
         required
       />
-      <MDBCheckbox name="remember" label="Remember me" />
       <MDBBtn className="w-100 mt-3" type="submit">
         Sign up
       </MDBBtn>
