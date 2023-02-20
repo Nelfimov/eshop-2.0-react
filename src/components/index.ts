@@ -5,3 +5,5 @@ export * from './product-card';
 export * from './loader';
 export * from './product-header';
 export * from './product-body-images';
+export * from './signup-form';
+export * from './login-form';
