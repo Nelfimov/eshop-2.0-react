@@ -60,6 +60,10 @@ export function SignUpForm({ router }: Props) {
         'confirmPassword'
       ) as HTMLInputElement;
       password.setCustomValidity(errors['password']);
+      const confirmPassword = document.getElementById(
+        'confirmPassword'
+      ) as HTMLInputElement;
+      confirmPassword.setCustomValidity(errors['password']);
     }
     setErrors(errors);
     return formIsValid;
