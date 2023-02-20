@@ -2,7 +2,7 @@ import { MDBBtn, MDBInput } from 'mdb-react-ui-kit';
 
 export default function Auth() {
   return (
-    <form className="mx-auto lg" style={{ maxWidth: '600px' }}>
+    <form className="mx-auto lg col-12 col-sm-8 col-md-6">
       <MDBInput
         className="mb-4"
         type="email"
