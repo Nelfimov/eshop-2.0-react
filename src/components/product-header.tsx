@@ -10,6 +10,7 @@ import {
   MDBIcon,
 } from 'mdb-react-ui-kit';
 import { Product as IProduct } from '@/types';
+import { addToCart } from '@/helpers';
 
 interface Props {
   product: IProduct;
@@ -42,7 +43,11 @@ export function ProductHeader({ product }: Props) {
             <MDBCardTitle>€{product.totalPrice.toFixed(2)}</MDBCardTitle>
           )}
           <MDBCardText>{product.description}</MDBCardText>
-          <MDBBtn className="m-1" color="success">
+          <MDBBtn
+            className="m-1"
+            color="success"
+            onClick={() => addToCart(product._id)}
+          >
             <MDBIcon className="me-1" icon="cart-plus" />
             Add to cart
           </MDBBtn>
