@@ -8,8 +8,8 @@ export function setCookie(
     ...options,
   };
 
-  if (options['expires'] instanceof Date) {
-    options.expires = options.expires.toUTCString();
+  if (options['max-age'] instanceof Date) {
+    options['max-age'] = options['max-age'].toUTCString();
   }
 
   let updatedCookie = `${encodeURIComponent(name)}=${encodeURIComponent(

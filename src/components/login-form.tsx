@@ -27,18 +27,12 @@ export function LogInForm({ router }: Props) {
       headers: {
         'content-type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(body),
     });
     const data = await response.json();
     if (!data.success) {
       return console.error(data.message);
-    }
-
-    const { checked } = document.getElementById('remember') as HTMLInputElement;
-    if (checked) {
-      // localStorage.setItem('token', data.token);
-    } else {
-      // sessionStorage.setItem('token', data.token);
     }
     router.push('/');
   }

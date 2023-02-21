@@ -84,6 +84,7 @@ export function SignUpForm({ router }: Props) {
     const body = { email, password };
     const response = await fetch('http://localhost:3001/auth/register', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'content-type': 'application/json',
       },
@@ -93,7 +94,6 @@ export function SignUpForm({ router }: Props) {
     if (!data.success) {
       return console.error(data.message);
     }
-    localStorage.setItem('token', data.token);
     router.push('/');
   }
 
