@@ -1,9 +1,11 @@
+import { Product } from './product';
+
 export interface Cart {
-  items: Item[];
+  cartItems: CartItem[];
   checkout: boolean;
 }
 
-export interface Item {
+export interface CartItem extends Product {
   id: string;
   quantity: number;
   price: number;

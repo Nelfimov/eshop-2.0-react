@@ -1,4 +1,4 @@
-import { Item } from '@/types';
+import { Cart, CartItem, Product } from '@/types';
 import {
   REMOVE_ITEM,
   ADD_TO_CART,
@@ -8,7 +8,7 @@ import {
   CLEAR,
 } from './cart-types';
 
-function Storage(cartItems: Item[]) {
+function Storage(cartItems: CartItem[]) {
   if (typeof window !== 'undefined')
     localStorage.setItem(
       'cartItems',
@@ -16,7 +16,7 @@ function Storage(cartItems: Item[]) {
     );
 }
 
-export function sumItems(cartItems: Item[]) {
+export function sumItems(cartItems: CartItem[]) {
   Storage(cartItems);
   const itemCount = cartItems.reduce(
     (total, product) => total + product.quantity,
@@ -31,7 +31,7 @@ export function sumItems(cartItems: Item[]) {
 }
 
 export function CartReducer(
-  state: any,
+  state: Cart,
   action: {
     type:
       | 'ADD_TO_CART'
@@ -40,16 +40,19 @@ export function CartReducer(
       | 'DECREASE'
       | 'CHECKOUT'
       | 'CLEAR';
-    payload?: any;
+    payload?: Product;
   }
-) {
+): Cart {
   switch (action.type) {
     case ADD_TO_CART:
       if (
-        !state.cartItems.find((item: Item) => item.id === action.payload.id)
+        !state.cartItems.find(
+          (item: CartItem) => item.id === action.payload!.id
+        )
       ) {
         state.cartItems.push({
-          ...action.payload,
+          id: action.payload!.id,
+          price: action.payload!.totalPrice,
           quantity: 1,
         });
       }
@@ -64,18 +67,22 @@ export function CartReducer(
       return {
         ...state,
         ...sumItems(
-          state.cartItems.filter((item: Item) => item.id !== action.payload.id)
+          state.cartItems.filter(
+            (item: CartItem) => item.id !== action.payload!.id
+          )
         ),
         cartItems: [
           ...state.cartItems.filter(
-            (item: Item) => item.id !== action.payload.id
+            (item: CartItem) => item.id !== action.payload!.id
           ),
         ],
       };
 
     case INCREASE:
       state.cartItems[
-        state.cartItems.findIndex((item: Item) => item.id === action.payload.id)
+        state.cartItems.findIndex(
+          (item: CartItem) => item.id === action.payload!.id
+        )
       ].quantity++;
       return {
         ...state,
@@ -85,7 +92,9 @@ export function CartReducer(
 
     case DECREASE:
       state.cartItems[
-        state.cartItems.findIndex((item: Item) => item.id === action.payload.id)
+        state.cartItems.findIndex(
+          (item: CartItem) => item.id === action.payload!.id
+        )
       ].quantity--;
       return {
         ...state,
@@ -102,6 +111,7 @@ export function CartReducer(
 
     case CLEAR:
       return {
+        ...state,
         cartItems: [],
         ...sumItems([]),
       };

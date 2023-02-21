@@ -9,7 +9,7 @@ import {
   MDBBtn,
   MDBIcon,
 } from 'mdb-react-ui-kit';
-import { Item, Product as IProduct } from '@/types';
+import { CartItem, Product as IProduct } from '@/types';
 import { addToCart } from '@/helpers';
 import { useContext } from 'react';
 import { CartContext } from '@/context';
@@ -22,7 +22,7 @@ export function ProductHeader({ product }: Props) {
   const cart = useContext(CartContext);
 
   function isInCart() {
-    return !!cart!.cartItems.find((item: Item) => item.id === product._id);
+    return !!cart!.cartItems.find((item: CartItem) => item.id === product._id);
   }
 
   return (
@@ -57,7 +57,7 @@ export function ProductHeader({ product }: Props) {
                 <MDBBtn
                   className="m-1"
                   color="success"
-                  onClick={() => addToCart(product._id)}
+                  onClick={() => cart?.addToCart(product)}
                 >
                   <MDBIcon className="me-1" icon="cart-plus" />
                   Add to cart
@@ -68,7 +68,7 @@ export function ProductHeader({ product }: Props) {
             <MDBBtn
               className="m-1"
               color="success"
-              onClick={() => addToCart(product._id)}
+              onClick={() => cart?.addToCart(product)}
             >
               <MDBIcon className="me-1" icon="cart-plus" />
               Add to cart

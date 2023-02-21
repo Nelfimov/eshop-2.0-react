@@ -1,13 +1,13 @@
-import { Item } from '@/types';
+import { CartItem, Product } from '@/types';
 import { createContext } from 'react';
 
 interface CartCon {
-  cartItems: Item[];
+  cartItems: CartItem[];
   checkout: boolean;
-  removeFromCart: (payload: any) => void;
-  addToCart: (payload: any) => void;
-  increase: (payload: any) => void;
-  decrease: (payload: any) => void;
+  removeFromCart: (payload: Product) => void;
+  addToCart: (payload: Product) => void;
+  increase: (payload: Product) => void;
+  decrease: (payload: Product) => void;
   clearCart: () => void;
   handleCheckout: () => void;
 }

@@ -1,9 +1,9 @@
-import { Item } from '@/types';
+import { CartItem, Product } from '@/types';
 import { PropsWithChildren, useReducer } from 'react';
 import { CartContext } from './cart-context';
 import { CartReducer, sumItems } from './cart-reducer';
 
-let storage: Item[] = [];
+let storage: CartItem[] = [];
 
 if (typeof window !== 'undefined') {
   storage = localStorage.getItem('cartItems')
@@ -22,28 +22,28 @@ export function CartProvider({ children }: PropsWithChildren) {
   /**
    * Function to handle when an item is added from the store into the Cart
    */
-  function addToCart(payload: Item) {
+  function addToCart(payload: Product) {
     dispatch({ type: 'ADD_TO_CART', payload });
   }
 
   /**
    * Function to handle when an item that is in the cart is added again
    */
-  function increase(payload: Item) {
+  function increase(payload: Product) {
     dispatch({ type: 'INCREASE', payload });
   }
 
   /**
    * Function to handle when an item is removed from the cart
    */
-  function decrease(payload: Item) {
+  function decrease(payload: Product) {
     dispatch({ type: 'DECREASE', payload });
   }
 
   /**
    * Function to remove an item from the cart
    */
-  function removeFromCart(payload: Item) {
+  function removeFromCart(payload: Product) {
     dispatch({ type: 'REMOVE_ITEM', payload });
   }
 
@@ -64,7 +64,7 @@ export function CartProvider({ children }: PropsWithChildren) {
   return (
     <CartContext.Provider
       value={{
-        showCart: state.showCart,
+        ...state,
         cartItems: state.cartItems,
         addToCart,
         removeFromCart,
@@ -72,7 +72,6 @@ export function CartProvider({ children }: PropsWithChildren) {
         decrease,
         handleCheckout,
         clearCart,
-        ...state,
       }}
     >
       {children}
