@@ -1,7 +1,4 @@
-export interface Cart {
-  id: string;
-  quantity: number;
-}
+import { Cart } from '@/types';
 
 export function addToCart(id: string) {
   const cartString = localStorage.getItem('cart');
