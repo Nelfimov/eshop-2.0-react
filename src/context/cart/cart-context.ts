@@ -3,6 +3,8 @@ import { createContext } from 'react';
 
 interface CartCon {
   cartItems: CartItem[];
+  itemCount: number;
+  total: number;
   checkout: boolean;
   removeFromCart: (payload: Product) => void;
   addToCart: (payload: Product) => void;

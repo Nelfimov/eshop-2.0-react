@@ -10,7 +10,6 @@ import {
   MDBIcon,
 } from 'mdb-react-ui-kit';
 import { CartItem, Product as IProduct } from '@/types';
-import { addToCart } from '@/helpers';
 import { useContext } from 'react';
 import { CartContext } from '@/context';
 
@@ -52,18 +51,28 @@ export function ProductHeader({ product }: Props) {
           )}
           <MDBCardText>{product.description}</MDBCardText>
           {isInCart() ? (
-            <MDBCol>
-              <MDBRow>
+            <MDBRow>
+              <MDBCol size="md" className="d-flex justify-content-center">
                 <MDBBtn
                   className="m-1"
-                  color="success"
-                  onClick={() => cart?.addToCart(product)}
+                  color="info"
+                  onClick={() => cart?.increase(product)}
                 >
                   <MDBIcon className="me-1" icon="cart-plus" />
-                  Add to cart
+                  Add 1 more
                 </MDBBtn>
-              </MDBRow>
-            </MDBCol>
+              </MDBCol>
+              <MDBCol>
+                <MDBBtn
+                  className="m-1"
+                  color="danger"
+                  onClick={() => cart?.decrease(product)}
+                >
+                  <MDBIcon className="me-1" icon="cart-plus" />
+                  Decrease by 1
+                </MDBBtn>
+              </MDBCol>
+            </MDBRow>
           ) : (
             <MDBBtn
               className="m-1"

@@ -10,11 +10,14 @@ import {
   MDBNavbarToggler,
   MDBInput,
   MDBBtn,
+  MDBBadge,
 } from 'mdb-react-ui-kit';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { CartContext } from '@/context';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
+  const cart = useContext(CartContext);
 
   return (
     <MDBNavbar fixed="top" expand="lg" light bgColor="light">
@@ -44,6 +47,9 @@ export function Navbar() {
             </MDBNavbarItem>
             <MDBNavbarItem>
               <Link href="/cart" className="nav-link">
+                {cart!.itemCount > 0 ? (
+                  <MDBBadge color="danger">{cart!.itemCount}</MDBBadge>
+                ) : null}
                 <MDBIcon className="me-1" icon="shopping-cart" />
                 Cart
               </Link>

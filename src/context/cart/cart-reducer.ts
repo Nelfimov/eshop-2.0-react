@@ -91,11 +91,12 @@ export function CartReducer(
       };
 
     case DECREASE:
-      state.cartItems[
-        state.cartItems.findIndex(
-          (item: CartItem) => item.id === action.payload!.id
-        )
-      ].quantity--;
+      const index = state.cartItems.findIndex(
+        (item: CartItem) => item.id === action.payload!.id
+      );
+      state.cartItems[index].quantity > 1
+        ? state.cartItems[index].quantity--
+        : state.cartItems.splice(index, 1);
       return {
         ...state,
         ...sumItems(state.cartItems),
