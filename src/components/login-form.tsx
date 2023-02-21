@@ -36,9 +36,9 @@ export function LogInForm({ router }: Props) {
 
     const { checked } = document.getElementById('remember') as HTMLInputElement;
     if (checked) {
-      localStorage.setItem('token', data.token);
+      // localStorage.setItem('token', data.token);
     } else {
-      sessionStorage.setItem('token', data.token);
+      // sessionStorage.setItem('token', data.token);
     }
     router.push('/');
   }
