@@ -94,9 +94,11 @@ export function CartReducer(
       const index = state.cartItems.findIndex(
         (item: CartItem) => item.id === action.payload!.id
       );
-      state.cartItems[index].quantity > 1
-        ? state.cartItems[index].quantity--
-        : state.cartItems.splice(index, 1);
+      if (index >= 0) {
+        state.cartItems[index].quantity > 1
+          ? state.cartItems[index].quantity--
+          : state.cartItems.splice(index, 1);
+      }
       return {
         ...state,
         ...sumItems(state.cartItems),
