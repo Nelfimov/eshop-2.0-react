@@ -1,39 +1,49 @@
-import { Cart } from '@/types';
+import { Item } from '@/types';
 import { PropsWithChildren, useReducer } from 'react';
 import { CartContext } from './cart-context';
-import { CartReducer } from './cart-reducer';
+import { CartReducer, sumItems } from './cart-reducer';
+
+let storage: Item[] = [];
+
+if (typeof window !== 'undefined') {
+  storage = localStorage.getItem('cartItems')
+    ? JSON.parse(localStorage.getItem('cartItems')!)
+    : [];
+}
 
 export function CartProvider({ children }: PropsWithChildren) {
-  const initialState: Cart | [] = localStorage.getItem('cart')
-    ? JSON.parse(localStorage.getItem('cart')!)
-    : [];
+  const initialState = {
+    cartItems: storage,
+    ...sumItems(storage),
+    checkout: false,
+  };
   const [state, dispatch] = useReducer(CartReducer, initialState);
 
   /**
    * Function to handle when an item is added from the store into the Cart
    */
-  function addToCart(payload: any) {
+  function addToCart(payload: Item) {
     dispatch({ type: 'ADD_TO_CART', payload });
   }
 
   /**
    * Function to handle when an item that is in the cart is added again
    */
-  function increase(payload: any) {
+  function increase(payload: Item) {
     dispatch({ type: 'INCREASE', payload });
   }
 
   /**
    * Function to handle when an item is removed from the cart
    */
-  function decrease(payload: any) {
+  function decrease(payload: Item) {
     dispatch({ type: 'DECREASE', payload });
   }
 
   /**
    * Function to remove an item from the cart
    */
-  function removeFromCart(payload: any) {
+  function removeFromCart(payload: Item) {
     dispatch({ type: 'REMOVE_ITEM', payload });
   }
 

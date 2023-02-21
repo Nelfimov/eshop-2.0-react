@@ -9,14 +9,22 @@ import {
   MDBBtn,
   MDBIcon,
 } from 'mdb-react-ui-kit';
-import { Product as IProduct } from '@/types';
+import { Item, Product as IProduct } from '@/types';
 import { addToCart } from '@/helpers';
+import { useContext } from 'react';
+import { CartContext } from '@/context';
 
 interface Props {
   product: IProduct;
 }
 
 export function ProductHeader({ product }: Props) {
+  const cart = useContext(CartContext);
+
+  function isInCart() {
+    return !!cart!.cartItems.find((item: Item) => item.id === product._id);
+  }
+
   return (
     <MDBCardHeader>
       <MDBRow>
@@ -43,14 +51,29 @@ export function ProductHeader({ product }: Props) {
             <MDBCardTitle>€{product.totalPrice.toFixed(2)}</MDBCardTitle>
           )}
           <MDBCardText>{product.description}</MDBCardText>
-          <MDBBtn
-            className="m-1"
-            color="success"
-            onClick={() => addToCart(product._id)}
-          >
-            <MDBIcon className="me-1" icon="cart-plus" />
-            Add to cart
-          </MDBBtn>
+          {isInCart() ? (
+            <MDBCol>
+              <MDBRow>
+                <MDBBtn
+                  className="m-1"
+                  color="success"
+                  onClick={() => addToCart(product._id)}
+                >
+                  <MDBIcon className="me-1" icon="cart-plus" />
+                  Add to cart
+                </MDBBtn>
+              </MDBRow>
+            </MDBCol>
+          ) : (
+            <MDBBtn
+              className="m-1"
+              color="success"
+              onClick={() => addToCart(product._id)}
+            >
+              <MDBIcon className="me-1" icon="cart-plus" />
+              Add to cart
+            </MDBBtn>
+          )}
         </MDBCol>
       </MDBRow>
     </MDBCardHeader>
