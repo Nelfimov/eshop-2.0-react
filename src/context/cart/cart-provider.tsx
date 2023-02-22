@@ -1,23 +1,33 @@
-import { CartItem, Product } from '@/types';
-import { PropsWithChildren, useReducer } from 'react';
+import { Product } from '@/types';
+import { PropsWithChildren, useEffect, useReducer } from 'react';
 import { CartContext } from './cart-context';
 import { CartReducer, sumItems } from './cart-reducer';
 
-let storage: CartItem[] = [];
-
-if (typeof window !== 'undefined') {
-  storage = localStorage.getItem('cartItems')
-    ? JSON.parse(localStorage.getItem('cartItems')!)
-    : [];
-}
-
 export function CartProvider({ children }: PropsWithChildren) {
   const initialState = {
-    cartItems: storage,
-    ...sumItems(storage),
+    cartItems: [],
+    ...sumItems([]),
     checkout: false,
   };
+
   const [state, dispatch] = useReducer(CartReducer, initialState);
+
+  useEffect(() => {
+    const cartStorage = localStorage.getItem('cart');
+    if (cartStorage) {
+      dispatch({
+        type: 'INIT',
+        payload: JSON.parse(cartStorage),
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (state !== initialState) {
+      localStorage.setItem('cart', JSON.stringify(state));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   /**
    * Function to handle when an item is added from the store into the Cart
@@ -72,6 +82,7 @@ export function CartProvider({ children }: PropsWithChildren) {
         decrease,
         handleCheckout,
         clearCart,
+        ...sumItems(state.cartItems),
       }}
     >
       {children}

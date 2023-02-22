@@ -1,4 +1,4 @@
-import { Cart, CartItem, Product } from '@/types';
+import { ACTION, Cart, CartItem } from '@/types';
 import {
   REMOVE_ITEM,
   ADD_TO_CART,
@@ -6,18 +6,10 @@ import {
   DECREASE,
   CHECKOUT,
   CLEAR,
+  INIT,
 } from './cart-types';
 
-function Storage(cartItems: CartItem[]) {
-  if (typeof window !== 'undefined')
-    localStorage.setItem(
-      'cartItems',
-      JSON.stringify(cartItems.length > 0 ? cartItems : [])
-    );
-}
-
 export function sumItems(cartItems: CartItem[]) {
-  Storage(cartItems);
   const itemCount = cartItems.reduce(
     (total, product) => total + product.quantity,
     0
@@ -30,20 +22,14 @@ export function sumItems(cartItems: CartItem[]) {
   return { itemCount, total };
 }
 
-export function CartReducer(
-  state: Cart,
-  action: {
-    type:
-      | 'ADD_TO_CART'
-      | 'REMOVE_ITEM'
-      | 'INCREASE'
-      | 'DECREASE'
-      | 'CHECKOUT'
-      | 'CLEAR';
-    payload?: Product;
-  }
-): Cart {
+export function CartReducer(state: Cart, action: ACTION) {
   switch (action.type) {
+    case INIT:
+      return {
+        ...state,
+        cartItems: [...action.payload.cartItems],
+      };
+
     case ADD_TO_CART:
       if (
         !state.cartItems.find(
