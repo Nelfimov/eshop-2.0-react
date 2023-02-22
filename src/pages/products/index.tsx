@@ -16,7 +16,7 @@ export default function Products() {
   return (
     <>
       <Head>
-        <title>Products | Jetzt ist die beste Zeit Online Shop</title>
+        <title>Catalogue | Jetzt ist die beste Zeit Online Shop</title>
       </Head>
       <MDBRow className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
         {isLoading || isValidating ? (
