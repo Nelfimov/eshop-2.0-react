@@ -11,6 +11,12 @@ export default function Cart() {
       <MDBCard className="p-3">
         <h1>Cart</h1>
         <MDBRow>
+          <MDBCol>#</MDBCol>
+          <MDBCol>Name</MDBCol>
+          <MDBCol>Quantity</MDBCol>
+          <MDBCol>Total amount</MDBCol>
+        </MDBRow>
+        <MDBRow>
           <MDBCol>
             <Link href="/">
               <MDBBtn color="secondary">Continue shopping</MDBBtn>
