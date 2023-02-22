@@ -34,6 +34,14 @@ export function Navbar() {
         <MDBCollapse navbar show={showNavToggler}>
           <MDBNavbarNav right fullWidth={false}>
             <MDBNavbarItem>
+              <form className="d-flex input-group w-auto">
+                <MDBBtn color="primary">
+                  <MDBIcon icon="search" />
+                </MDBBtn>
+                <MDBInput type="text" label="Search" id="search" />
+              </form>
+            </MDBNavbarItem>
+            <MDBNavbarItem>
               <Link href="/" className="nav-link">
                 <MDBIcon className="me-1" icon="home" />
                 Home
@@ -47,12 +55,9 @@ export function Navbar() {
             </MDBNavbarItem>
             <MDBNavbarItem>
               <Link href="/cart" className="nav-link d-flex align-items-center">
-                <MDBBadge
-                  color="danger"
-                  className={cart!.itemCount > 0 ? 'visible' : 'invisible'}
-                >
-                  {cart!.itemCount}
-                </MDBBadge>
+                {cart!.itemCount > 0 ? (
+                  <MDBBadge color="danger">{cart!.itemCount}</MDBBadge>
+                ) : null}
                 <MDBIcon className="me-1" icon="shopping-cart" />
                 Cart
               </Link>
@@ -62,14 +67,6 @@ export function Navbar() {
                 <MDBIcon className="me-1" icon="sign-in-alt" />
                 Authorize
               </Link>
-            </MDBNavbarItem>
-            <MDBNavbarItem>
-              <form className="d-flex input-group w-auto">
-                <MDBInput type="text" label="Search" id="search" />
-                <MDBBtn color="primary">
-                  <MDBIcon icon="search" />
-                </MDBBtn>
-              </form>
             </MDBNavbarItem>
           </MDBNavbarNav>
         </MDBCollapse>

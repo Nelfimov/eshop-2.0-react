@@ -52,9 +52,9 @@ export function ProductHeader({ product }: Props) {
           <MDBCardText>{product.description}</MDBCardText>
           {isInCart() ? (
             <MDBRow>
-              <MDBCol size="md" className="d-flex justify-content-center">
+              <MDBCol size="md" className="d-flex">
                 <MDBBtn
-                  className="m-1"
+                  className="m-1 flex-fill"
                   color="info"
                   onClick={() => cart?.increase(product)}
                 >
@@ -62,9 +62,9 @@ export function ProductHeader({ product }: Props) {
                   Add 1 more
                 </MDBBtn>
               </MDBCol>
-              <MDBCol>
+              <MDBCol className="d-flex">
                 <MDBBtn
-                  className="m-1"
+                  className="m-1 flex-fill"
                   color="danger"
                   onClick={() => cart?.decrease(product)}
                 >
