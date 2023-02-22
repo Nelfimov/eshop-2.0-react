@@ -17,7 +17,8 @@ import { CartContext } from '@/context';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
-  const cart = useContext(CartContext);
+  // @ts-expect-error: ignore
+  const { itemCount } = useContext(CartContext);
 
   return (
     <MDBNavbar fixed="top" expand="lg" light bgColor="light">
@@ -55,8 +56,8 @@ export function Navbar() {
             </MDBNavbarItem>
             <MDBNavbarItem>
               <Link href="/cart" className="nav-link d-flex align-items-center">
-                {cart!.itemCount > 0 ? (
-                  <MDBBadge color="danger">{cart!.itemCount}</MDBBadge>
+                {itemCount > 0 ? (
+                  <MDBBadge color="danger">{itemCount}</MDBBadge>
                 ) : null}
                 <MDBIcon className="me-1" icon="shopping-cart" />
                 Cart

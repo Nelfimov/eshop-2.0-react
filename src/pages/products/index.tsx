@@ -6,13 +6,12 @@ import { MDBCol, MDBRow } from 'mdb-react-ui-kit';
 
 export default function Products() {
   const { data, error, isLoading, isValidating } = useSWR(
-    'http://127.0.0.1:3001/products',
+    'http://localhost:3001/products',
     fetcher
   );
 
-  if (error) {
-    return <h1>Failed to load products</h1>;
-  }
+  if (error) return <h1>Failed to load products</h1>;
+
   return (
     <>
       <Head>
