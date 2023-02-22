@@ -46,7 +46,7 @@ export function Navbar() {
               </Link>
             </MDBNavbarItem>
             <MDBNavbarItem>
-              <Link href="/cart" className="nav-link">
+              <Link href="/cart" className="nav-link d-flex align-items-center">
                 <MDBBadge
                   color="danger"
                   className={cart!.itemCount > 0 ? 'visible' : 'invisible'}
