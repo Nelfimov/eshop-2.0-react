@@ -7,6 +7,7 @@ import {
   CHECKOUT,
   CLEAR,
   INIT,
+  UPDATE_PRICE,
 } from './cart-types';
 
 export function sumItems(cartItems: CartItem[]) {
@@ -31,11 +32,7 @@ export function CartReducer(state: Cart, action: ACTION) {
       };
 
     case ADD_TO_CART:
-      if (
-        !state.cartItems.find(
-          (item: CartItem) => item.id === action.payload!.id
-        )
-      ) {
+      if (!state.cartItems.find((item) => item.id === action.payload!.id)) {
         state.cartItems.push({
           id: action.payload!.id,
           price: action.payload!.totalPrice,
@@ -53,22 +50,16 @@ export function CartReducer(state: Cart, action: ACTION) {
       return {
         ...state,
         ...sumItems(
-          state.cartItems.filter(
-            (item: CartItem) => item.id !== action.payload!.id
-          )
+          state.cartItems.filter((item) => item.id !== action.payload.id)
         ),
         cartItems: [
-          ...state.cartItems.filter(
-            (item: CartItem) => item.id !== action.payload!.id
-          ),
+          ...state.cartItems.filter((item) => item.id !== action.payload.id),
         ],
       };
 
     case INCREASE:
       state.cartItems[
-        state.cartItems.findIndex(
-          (item: CartItem) => item.id === action.payload!.id
-        )
+        state.cartItems.findIndex((item) => item.id === action.payload.id)
       ].quantity++;
       return {
         ...state,
@@ -78,7 +69,7 @@ export function CartReducer(state: Cart, action: ACTION) {
 
     case DECREASE:
       const index = state.cartItems.findIndex(
-        (item: CartItem) => item.id === action.payload!.id
+        (item) => item.id === action.payload.id
       );
       if (index >= 0) {
         state.cartItems[index].quantity > 1
@@ -103,6 +94,16 @@ export function CartReducer(state: Cart, action: ACTION) {
         ...state,
         cartItems: [],
         ...sumItems([]),
+      };
+
+    case UPDATE_PRICE:
+      state.cartItems[
+        state.cartItems.findIndex((item) => item.id === action.payload.id)
+      ].price = action.payload.totalPrice;
+      return {
+        ...state,
+        ...sumItems(state.cartItems),
+        cartItems: [...state.cartItems],
       };
 
     default:

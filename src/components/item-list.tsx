@@ -9,11 +9,12 @@ interface Props {
 
 export function ItemList({ product, index, quantity }: Props) {
   return (
-    <MDBRow>
-      <MDBCol>{index}</MDBCol>
-      <MDBCol>{product.name}</MDBCol>
-      <MDBCol>{quantity}</MDBCol>
-      <MDBCol>€{product.totalPrice * quantity}</MDBCol>
-    </MDBRow>
+    <tr>
+      <td align="center">{index}</td>
+      <td align="center">{product.name}</td>
+      <td align="center">{quantity}</td>
+      <td align="center">€{product.totalPrice}</td>
+      <td align="center">€{product.totalPrice * quantity}</td>
+    </tr>
   );
 }

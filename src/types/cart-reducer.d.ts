@@ -6,5 +6,6 @@ export type ACTION =
   | { type: 'REMOVE_ITEM'; payload: Product }
   | { type: 'DECREASE'; payload: Product }
   | { type: 'INCREASE'; payload: Product }
+  | { type: 'UPDATE_PRICE'; payload: Product }
   | { type: 'CLEAR' }
   | { type: 'CHECKOUT' };

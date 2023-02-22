@@ -5,3 +5,4 @@ export const DECREASE = 'DECREASE';
 export const CHECKOUT = 'CHECKOUT';
 export const CLEAR = 'CLEAR';
 export const INIT = 'INIT';
+export const UPDATE_PRICE = 'UPDATE_PRICE';
