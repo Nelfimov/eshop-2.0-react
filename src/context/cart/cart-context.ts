@@ -1,7 +1,7 @@
-import { Cart, CartItem, Product } from '@/types';
+import { Cart, Product } from '@/types';
 import { createContext } from 'react';
 
-interface CartCon extends Cart {
+export interface CartCon extends Cart {
   /**
    * Function to remove an item from the cart
    */
@@ -29,7 +29,7 @@ interface CartCon extends Cart {
   /**
    * Update price of product from fetch request
    */
-  updatePrice: (payload: Product) => void;
+  updatePrices: (payload: Product[]) => void;
 }
 
 export const CartContext = createContext<CartCon | null>(null);

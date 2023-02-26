@@ -1,4 +1,4 @@
-import { ACTION, Cart, CartItem } from '@/types';
+import { ACTION, Cart, CartItem, Product } from '@/types';
 import {
   REMOVE_ITEM,
   ADD_TO_CART,
@@ -7,7 +7,7 @@ import {
   CHECKOUT,
   CLEAR,
   INIT,
-  UPDATE_PRICE,
+  UPDATE_PRICES,
 } from './cart-types';
 
 export function sumItems(cartItems: CartItem[]) {
@@ -96,10 +96,12 @@ export function CartReducer(state: Cart, action: ACTION) {
         ...sumItems([]),
       };
 
-    case UPDATE_PRICE:
-      state.cartItems[
-        state.cartItems.findIndex((item) => item.id === action.payload.id)
-      ].price = action.payload.totalPrice;
+    case UPDATE_PRICES:
+      action.payload.forEach((product: Product) => {
+        state.cartItems[
+          state.cartItems.findIndex((item) => item.id === product._id)
+        ].price = product.totalPrice;
+      });
       return {
         ...state,
         ...sumItems(state.cartItems),

@@ -53,8 +53,8 @@ export function CartProvider({ children }: PropsWithChildren) {
     dispatch({ type: 'CHECKOUT' });
   }
 
-  function updatePrice(payload: Product) {
-    dispatch({ type: 'UPDATE_PRICE', payload });
+  function updatePrices(payload: Product[]) {
+    dispatch({ type: 'UPDATE_PRICES', payload });
   }
 
   return (
@@ -68,7 +68,7 @@ export function CartProvider({ children }: PropsWithChildren) {
         decrease,
         handleCheckout,
         clearCart,
-        updatePrice,
+        updatePrices,
         ...sumItems(state.cartItems),
       }}
     >

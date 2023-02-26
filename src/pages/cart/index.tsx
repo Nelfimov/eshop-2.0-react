@@ -13,20 +13,23 @@ import {
 } from 'mdb-react-ui-kit';
 import Link from 'next/link';
 import Head from 'next/head';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { CartContext } from '@/context';
 import { CartItem, Product } from '@/types';
 import { fetcher } from '@/helpers';
 import { ItemList, Loader } from '@/components';
 
 export default function Cart() {
-  // @ts-expect-error: ignore
-  const { cartItems } = useContext(CartContext);
+  const cart = useContext(CartContext);
 
   const url = `http://localhost:3001/products?ids=${JSON.stringify(
-    cartItems.map((item: CartItem) => item.id)
+    cart!.cartItems.map((item: CartItem) => item.id)
   )}`;
   const { data, error, isLoading, isValidating } = useSWR(url, fetcher);
+
+  useEffect(() => {
+    !isLoading && cart!.updatePrices(data.products);
+  }, []);
 
   if (error)
     return (
@@ -48,50 +51,55 @@ export default function Cart() {
           <h1>Cart</h1>
         </MDBCardHeader>
         <MDBCardBody>
-          <MDBTable responsive="sm" striped hover>
-            <MDBTableHead>
-              <tr>
-                <th style={{ textAlign: 'center' }} scope="col">
-                  #
-                </th>
-                <th style={{ textAlign: 'center' }} scope="col">
-                  Name
-                </th>
-                <th style={{ textAlign: 'center' }} scope="col">
-                  Quantity
-                </th>
-                <th style={{ textAlign: 'center' }} scope="col">
-                  Price
-                </th>
-                <th style={{ textAlign: 'center' }} scope="col">
-                  Total amount
-                </th>
-              </tr>
-            </MDBTableHead>
-            <MDBTableBody>
-              {isLoading || isValidating ? (
-                <Loader />
-              ) : (
-                data &&
-                data.products.map((product: Product, index: number) => (
-                  <ItemList
-                    key={product._id}
-                    product={product}
-                    index={index + 1}
-                    quantity={1}
-                  />
-                ))
-              )}
-            </MDBTableBody>
-            <tfoot>
-              <tr>
-                <td colSpan={4} align="right">
-                  TOTAL:
-                </td>
-                <td></td>
-              </tr>
-            </tfoot>
-          </MDBTable>
+          {isLoading || isValidating ? (
+            <Loader />
+          ) : (
+            <MDBTable responsive="sm" striped hover>
+              <MDBTableHead>
+                <tr>
+                  <th style={{ textAlign: 'center' }} scope="col">
+                    #
+                  </th>
+                  <th style={{ textAlign: 'center' }} scope="col">
+                    Name
+                  </th>
+                  <th style={{ textAlign: 'center' }} scope="col">
+                    Quantity
+                  </th>
+                  <th style={{ textAlign: 'center' }} scope="col">
+                    Price
+                  </th>
+                  <th style={{ textAlign: 'center' }} scope="col">
+                    Total amount
+                  </th>
+                </tr>
+              </MDBTableHead>
+              <MDBTableBody>
+                {data &&
+                  data.products.map((product: Product, index: number) => (
+                    <ItemList
+                      key={product._id}
+                      product={product}
+                      index={index + 1}
+                      quantity={
+                        // @ts-expect-error: ignore
+                        cart!.cartItems.find(
+                          (item: CartItem) => item.id === product._id
+                        ).quantity
+                      }
+                    />
+                  ))}
+              </MDBTableBody>
+              <tfoot>
+                <tr>
+                  <td colSpan={4} align="right">
+                    TOTAL:
+                  </td>
+                  <td align="center">€{cart?.total}</td>
+                </tr>
+              </tfoot>
+            </MDBTable>
+          )}
         </MDBCardBody>
         <MDBCardFooter>
           <MDBRow>

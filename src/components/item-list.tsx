@@ -1,5 +1,4 @@
 import { Product } from '@/types';
-import { MDBCol, MDBRow } from 'mdb-react-ui-kit';
 
 interface Props {
   product: Product;
