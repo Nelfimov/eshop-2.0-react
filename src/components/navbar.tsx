@@ -11,6 +11,7 @@ import {
   MDBInput,
   MDBBtn,
   MDBBadge,
+  MDBInputGroup,
 } from 'mdb-react-ui-kit';
 import { useContext, useState } from 'react';
 import { CartContext } from '@/context';
@@ -37,11 +38,13 @@ export function Navbar() {
         <MDBCollapse navbar show={showNavToggler}>
           <MDBNavbarNav right fullWidth={false}>
             <MDBNavbarItem>
-              <form className="d-flex input-group w-auto">
-                <MDBBtn color="primary">
-                  <MDBIcon icon="search" />
-                </MDBBtn>
-                <MDBInput type="text" label="Search" id="search" />
+              <form className="d-flex w-auto">
+                <MDBInputGroup>
+                  <MDBBtn>
+                    <MDBIcon icon="search" />
+                  </MDBBtn>
+                  <MDBInput type="text" label="Search" id="search" />
+                </MDBInputGroup>
               </form>
             </MDBNavbarItem>
             <MDBNavbarItem>

@@ -8,3 +8,4 @@ export * from './product-body-images';
 export * from './signup-form';
 export * from './login-form';
 export * from './item-list';
+export * from './checkout-form';
