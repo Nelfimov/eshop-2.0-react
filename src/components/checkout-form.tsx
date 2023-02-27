@@ -1,4 +1,4 @@
-import { MDBValidation, MDBValidationItem, MDBInput } from 'mdb-react-ui-kit';
+import { MDBValidationItem, MDBInput } from 'mdb-react-ui-kit';
 
 interface Props {
   name: string;
@@ -7,7 +7,15 @@ interface Props {
 
 export function CheckoutForm({ name, data }: Props) {
   return (
-    <MDBValidation>
+    <>
+      <MDBValidationItem invalid className="mb-3 pb-1">
+        <MDBInput
+          type="text"
+          name={`${name}-name`}
+          label="Full name"
+          required
+        />
+      </MDBValidationItem>
       <MDBValidationItem invalid className="mb-3 pb-1">
         <MDBInput
           type="text"
@@ -26,7 +34,7 @@ export function CheckoutForm({ name, data }: Props) {
           required
         >
           <option selected disabled>
-            Country
+            Select country
           </option>
           {data &&
             data
@@ -48,6 +56,6 @@ export function CheckoutForm({ name, data }: Props) {
           required
         />
       </MDBValidationItem>
-    </MDBValidation>
+    </>
   );
 }
