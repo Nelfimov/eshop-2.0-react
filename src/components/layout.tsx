@@ -7,7 +7,11 @@ export function Layout({ children }: PropsWithChildren) {
     <>
       <Navbar />
       <main>
-        <MDBContainer breakpoint="lg" className="mt-5 mb-3">
+        <MDBContainer
+          breakpoint="lg"
+          className="mt-5 mb-3"
+          style={{ minHeight: '80.5vh' }}
+        >
           {children}
         </MDBContainer>
       </main>
