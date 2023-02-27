@@ -102,17 +102,17 @@ export default function Cart() {
           )}
         </MDBCardBody>
         <MDBCardFooter>
-          <MDBRow>
-            <MDBCol>
-              <Link href="/">
-                <MDBBtn color="secondary">Continue shopping</MDBBtn>
-              </Link>
-            </MDBCol>
-            <MDBCol>
-              <Link href="/cart/checkout">
-                <MDBBtn color="success">To checkout</MDBBtn>
-              </Link>
-            </MDBCol>
+          <MDBRow className="row-cols-1 row-cols-sm-2 g-4">
+            <Link href="/" className="d-flex">
+              <MDBBtn className="flex-fill" color="secondary">
+                Continue shopping
+              </MDBBtn>
+            </Link>
+            <Link href="/cart/checkout" className="d-flex">
+              <MDBBtn color="success" className="flex-fill">
+                To checkout
+              </MDBBtn>
+            </Link>
           </MDBRow>
         </MDBCardFooter>
       </MDBCard>
