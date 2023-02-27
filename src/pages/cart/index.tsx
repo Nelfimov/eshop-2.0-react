@@ -60,15 +60,21 @@ export default function Cart() {
               <Loader />
             ) : (
               <MDBTable responsive="sm" striped hover>
-                <MDBTableHead>
+                <MDBTableHead light>
                   <tr>
-                    <th style={{ textAlign: 'center' }} scope="col">
+                    <th
+                      style={{ textAlign: 'center', width: '10px' }}
+                      scope="col"
+                    >
                       #
                     </th>
                     <th style={{ textAlign: 'center' }} scope="col">
                       Name
                     </th>
-                    <th style={{ textAlign: 'center' }} scope="col">
+                    <th
+                      style={{ textAlign: 'center', width: '150px' }}
+                      scope="col"
+                    >
                       Quantity
                     </th>
                     <th style={{ textAlign: 'center' }} scope="col">
@@ -77,7 +83,10 @@ export default function Cart() {
                     <th style={{ textAlign: 'center' }} scope="col">
                       Total amount
                     </th>
-                    <th style={{ textAlign: 'center' }} scope="col">
+                    <th
+                      style={{ textAlign: 'center', width: '50px' }}
+                      scope="col"
+                    >
                       Delete?
                     </th>
                   </tr>
@@ -99,11 +108,16 @@ export default function Cart() {
                     ))}
                 </MDBTableBody>
                 <tfoot>
-                  <tr className="table-info">
+                  <tr className="table-info fw-bold">
                     <td colSpan={5} align="right">
                       TOTAL:
                     </td>
-                    <td align="center">€{cart?.total}</td>
+                    <td align="center">
+                      {new Intl.NumberFormat(navigator.language, {
+                        style: 'currency',
+                        currency: 'EUR',
+                      }).format(cart!.total)}
+                    </td>
                   </tr>
                 </tfoot>
               </MDBTable>

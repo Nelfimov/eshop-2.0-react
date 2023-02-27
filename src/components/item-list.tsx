@@ -34,8 +34,18 @@ export function ItemList({ product, index, quantity }: Props) {
           <MDBIcon icon="plus" />
         </MDBBtn>
       </td>
-      <td align="center">€{product.totalPrice}</td>
-      <td align="center">€{product.totalPrice * quantity}</td>
+      <td align="center">
+        {new Intl.NumberFormat(navigator.language, {
+          style: 'currency',
+          currency: 'EUR',
+        }).format(product.totalPrice)}
+      </td>
+      <td align="center">
+        {new Intl.NumberFormat(navigator.language, {
+          style: 'currency',
+          currency: 'EUR',
+        }).format(product.totalPrice * quantity)}
+      </td>
       <td align="center">
         <MDBBtn
           className="p-1 ms-1"
