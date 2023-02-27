@@ -5,7 +5,6 @@ import {
   MDBCardBody,
   MDBCardFooter,
   MDBCardHeader,
-  MDBCol,
   MDBRow,
   MDBTable,
   MDBTableBody,
@@ -91,7 +90,7 @@ export default function Cart() {
                   ))}
               </MDBTableBody>
               <tfoot>
-                <tr>
+                <tr className="table-info">
                   <td colSpan={4} align="right">
                     TOTAL:
                   </td>
