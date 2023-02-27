@@ -14,11 +14,13 @@ import {
 } from 'mdb-react-ui-kit';
 import { useContext, useState } from 'react';
 import { CartContext } from '@/context';
+import { useRouter } from 'next/router';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
   // @ts-expect-error: ignore
   const { itemCount } = useContext(CartContext);
+  const router = useRouter();
 
   return (
     <MDBNavbar fixed="top" expand="lg" light bgColor="light">
@@ -43,19 +45,34 @@ export function Navbar() {
               </form>
             </MDBNavbarItem>
             <MDBNavbarItem>
-              <Link href="/" className="nav-link">
+              <Link
+                href="/"
+                className={`nav-link ${
+                  router.pathname === '/' ? 'active' : ''
+                }`}
+              >
                 <MDBIcon className="me-1" icon="home" />
                 Home
               </Link>
             </MDBNavbarItem>
             <MDBNavbarItem>
-              <Link href="/products" className="nav-link">
+              <Link
+                href="/products"
+                className={`nav-link ${
+                  router.pathname === '/products' ? 'active' : ''
+                }`}
+              >
                 <MDBIcon className="me-1" icon="book-open" />
                 Catalogue
               </Link>
             </MDBNavbarItem>
             <MDBNavbarItem>
-              <Link href="/cart" className="nav-link d-flex align-items-center">
+              <Link
+                href="/cart"
+                className={`nav-link d-flex align-items-center ${
+                  router.pathname === '/cart' ? 'active' : ''
+                }`}
+              >
                 {itemCount > 0 ? (
                   <MDBBadge color="danger">{itemCount}</MDBBadge>
                 ) : null}
@@ -64,7 +81,12 @@ export function Navbar() {
               </Link>
             </MDBNavbarItem>
             <MDBNavbarItem>
-              <Link href="/auth" className="nav-link">
+              <Link
+                href="/auth"
+                className={`nav-link ${
+                  router.pathname === '/auth' ? 'active' : ''
+                }`}
+              >
                 <MDBIcon className="me-1" icon="sign-in-alt" />
                 Authorize
               </Link>
