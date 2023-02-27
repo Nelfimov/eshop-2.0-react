@@ -10,7 +10,8 @@ interface Props {
 }
 
 export function ItemList({ product, index, quantity }: Props) {
-  const cart = useContext(CartContext);
+  // @ts-expect-error: ignore
+  const { decrease, increase, removeFromCart } = useContext(CartContext);
 
   return (
     <tr>
@@ -20,7 +21,7 @@ export function ItemList({ product, index, quantity }: Props) {
         <MDBBtn
           className="p-1 me-1"
           color="danger"
-          onClick={() => cart?.decrease(product)}
+          onClick={() => decrease(product)}
         >
           <MDBIcon icon="minus" />
         </MDBBtn>
@@ -28,13 +29,22 @@ export function ItemList({ product, index, quantity }: Props) {
         <MDBBtn
           className="p-1 ms-1"
           color="success"
-          onClick={() => cart?.increase(product)}
+          onClick={() => increase(product)}
         >
           <MDBIcon icon="plus" />
         </MDBBtn>
       </td>
       <td align="center">€{product.totalPrice}</td>
       <td align="center">€{product.totalPrice * quantity}</td>
+      <td align="center">
+        <MDBBtn
+          className="p-1 ms-1"
+          color="warning"
+          onClick={() => removeFromCart(product)}
+        >
+          <MDBIcon icon="trash" />
+        </MDBBtn>
+      </td>
     </tr>
   );
 }

@@ -71,6 +71,9 @@ export default function Cart() {
                   <th style={{ textAlign: 'center' }} scope="col">
                     Total amount
                   </th>
+                  <th style={{ textAlign: 'center' }} scope="col">
+                    Delete?
+                  </th>
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
@@ -91,7 +94,7 @@ export default function Cart() {
               </MDBTableBody>
               <tfoot>
                 <tr className="table-info">
-                  <td colSpan={4} align="right">
+                  <td colSpan={5} align="right">
                     TOTAL:
                   </td>
                   <td align="center">€{cart?.total}</td>
