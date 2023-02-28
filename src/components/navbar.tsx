@@ -25,7 +25,7 @@ export function Navbar() {
 
   return (
     <MDBNavbar fixed="top" expand="lg" light bgColor="light">
-      <MDBContainer>
+      <MDBContainer breakpoint="lg">
         <MDBNavbarBrand href="#">JETZT IST DIE BESTE ZEIT</MDBNavbarBrand>
         <MDBNavbarToggler
           type="button"
