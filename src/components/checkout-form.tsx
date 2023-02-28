@@ -9,7 +9,11 @@ interface Props {
 export function CheckoutForm({ name, data, refs }: Props) {
   return (
     <>
-      <MDBValidationItem invalid className="mb-3 pb-1">
+      <MDBValidationItem
+        feedback="Has to be full name for delivery"
+        invalid
+        className="mb-3 pb-1"
+      >
         <MDBInput
           type="text"
           name={`${name}-name`}
@@ -18,16 +22,24 @@ export function CheckoutForm({ name, data, refs }: Props) {
           required
         />
       </MDBValidationItem>
-      <MDBValidationItem invalid className="mb-3 pb-1">
+      <MDBValidationItem
+        feedback="Street address is required"
+        invalid
+        className="mb-3 pb-1"
+      >
         <MDBInput
           type="text"
           name={`${name}-street`}
-          label="Street Address"
+          label="Street address with home/office/apt"
           ref={refs[1]}
           required
         />
       </MDBValidationItem>
-      <MDBValidationItem invalid className="mb-3 pb-1">
+      <MDBValidationItem
+        feedback="City is required"
+        invalid
+        className="mb-3 pb-1"
+      >
         <MDBInput
           type="text"
           name={`${name}-city`}
@@ -36,9 +48,13 @@ export function CheckoutForm({ name, data, refs }: Props) {
           required
         />
       </MDBValidationItem>
-      <MDBValidationItem invalid className="mb-3 pb-1">
+      <MDBValidationItem
+        feedback="Please choose your country"
+        invalid
+        className="mb-3 pb-1"
+      >
         <select
-          className="form-control select-input"
+          className="form-control"
           name={`${name}-country`}
           ref={refs[3]}
           defaultValue=""
@@ -59,7 +75,11 @@ export function CheckoutForm({ name, data, refs }: Props) {
               ))}
         </select>
       </MDBValidationItem>
-      <MDBValidationItem invalid className="mb-3 pb-1">
+      <MDBValidationItem
+        feedback="ZIP has to be a number"
+        invalid
+        className="mb-3 pb-1"
+      >
         <MDBInput
           type="number"
           name={`${name}-zip`}
