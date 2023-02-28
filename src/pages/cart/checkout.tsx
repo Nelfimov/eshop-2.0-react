@@ -8,75 +8,79 @@ import {
   MDBIcon,
   MDBRow,
   MDBValidation,
+  MDBInput,
+  MDBValidationItem,
 } from 'mdb-react-ui-kit';
 import Head from 'next/head';
 import useSWR from 'swr';
 import { CheckoutForm, Loader } from '@/components';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 
 export default function Checkout() {
   const { data, error, isLoading, isValidating } = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
     fetcher
   );
-  const nameShipping = useRef();
-  const streetShipping = useRef();
-  const cityShipping = useRef();
-  const countryShipping = useRef();
-  const zipShipping = useRef();
-  const nameBilling = useRef();
-  const streetBilling = useRef();
-  const cityBilling = useRef();
-  const countryBilling = useRef();
-  const zipBilling = useRef();
+
+  const email = useRef<HTMLInputElement>(null);
+  const nameShipping = useRef<HTMLInputElement>(null);
+  const streetShipping = useRef<HTMLInputElement>(null);
+  const cityShipping = useRef<HTMLInputElement>(null);
+  const countryShipping = useRef<HTMLInputElement>(null);
+  const zipShipping = useRef<HTMLInputElement>(null);
+  const nameBilling = useRef<HTMLInputElement>(null);
+  const streetBilling = useRef<HTMLInputElement>(null);
+  const cityBilling = useRef<HTMLInputElement>(null);
+  const countryBilling = useRef<HTMLInputElement>(null);
+  const zipBilling = useRef<HTMLInputElement>(null);
 
   function handleClick() {
-    // @ts-expect-error: ignore
-    if (nameShipping.current.value) {
-      // @ts-expect-error: ignore
+    if (
+      nameShipping.current &&
+      nameBilling.current &&
+      nameShipping.current.value
+    ) {
       nameBilling.current.value = nameShipping.current.value;
-      // @ts-expect-error: ignore
       nameBilling.current.focus();
     }
-    // @ts-expect-error: ignore
-    if (streetShipping.current.value) {
-      // @ts-expect-error: ignore
+    if (
+      streetShipping.current &&
+      streetBilling.current &&
+      streetShipping.current.value
+    ) {
       streetBilling.current.value = streetShipping.current.value;
-      // @ts-expect-error: ignore
       streetBilling.current.focus();
     }
-    // @ts-expect-error: ignore
-    if (cityShipping.current.value) {
-      // @ts-expect-error: ignore
+    if (
+      cityShipping.current &&
+      cityBilling.current &&
+      cityShipping.current.value
+    ) {
       cityBilling.current.value = cityShipping.current.value;
-      // @ts-expect-error: ignore
       cityBilling.current.focus();
     }
-    // @ts-expect-error: ignore
-    if (countryShipping.current.value) {
-      // @ts-expect-error: ignore
+    if (
+      countryShipping.current &&
+      countryBilling.current &&
+      countryShipping.current.value
+    ) {
       countryBilling.current.value = countryShipping.current.value;
-      // @ts-expect-error: ignore
       countryBilling.current.focus();
     }
-    // @ts-expect-error: ignore
-    if (zipShipping.current.value) {
-      // @ts-expect-error: ignore
+    if (
+      zipShipping.current &&
+      zipBilling.current &&
+      zipShipping.current.value
+    ) {
       zipBilling.current.value = zipShipping.current.value;
-      // @ts-expect-error: ignore
       zipBilling.current.focus();
     }
   }
 
-  if (error) {
-    return (
-      <>
-        <Head>
-          <title>Checkout | Jetzt ist die beste Zeit</title>
-        </Head>
-        <h1>Error</h1>
-      </>
-    );
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const response = await fetch('http://localhost:3000/');
   }
 
   return (
@@ -92,7 +96,20 @@ export default function Checkout() {
           {isLoading || isValidating ? (
             <Loader />
           ) : (
-            <MDBValidation>
+            <MDBValidation onSubmit={handleSubmit}>
+              <MDBValidationItem
+                className="mb-3 pb-1"
+                invalid
+                feedback="Email is required"
+              >
+                <MDBInput
+                  type="email"
+                  name="email"
+                  label="Email"
+                  ref={email}
+                  required
+                />
+              </MDBValidationItem>
               <MDBRow>
                 <MDBCol size="md">
                   <h2>Delivery address</h2>

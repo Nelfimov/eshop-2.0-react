@@ -81,7 +81,7 @@ export function CheckoutForm({ name, data, refs }: Props) {
         className="mb-3 pb-1"
       >
         <MDBInput
-          type="number"
+          type="text"
           name={`${name}-zip`}
           label="Zip code"
           ref={refs[4]}
