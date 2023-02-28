@@ -78,9 +78,44 @@ export default function Checkout() {
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    const response = await fetch('http://localhost:3000/');
+      const responseShippingAddress = await fetch(
+        'http://localhost:3001/addresses/',
+        {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify({
+            street: streetShipping.current!.value,
+            city: cityShipping.current!.value,
+            name: nameShipping.current!.value,
+            zip: zipShipping.current!.value,
+            country: countryShipping.current!.value,
+            fullName: nameShipping.current!.value,
+            type: 'shipping',
+          }),
+        }
+      );
+      const responseBillingAddress = await fetch(
+        'http://localhost:3001/addresses/',
+        {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify({
+            street: streetBilling.current!.value,
+            city: cityBilling.current!.value,
+            name: nameBilling.current!.value,
+            zip: zipBilling.current!.value,
+            country: countryBilling.current!.value,
+            fullName: nameBilling.current!.value,
+            type: 'billing',
+          }),
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
