@@ -32,15 +32,40 @@ export default function Checkout() {
 
   function handleClick() {
     // @ts-expect-error: ignore
-    nameBilling.current.value = nameShipping.current.value;
+    if (nameShipping.current.value) {
+      // @ts-expect-error: ignore
+      nameBilling.current.value = nameShipping.current.value;
+      // @ts-expect-error: ignore
+      nameBilling.current.focus();
+    }
     // @ts-expect-error: ignore
-    streetBilling.current.value = streetShipping.current.value;
+    if (streetShipping.current.value) {
+      // @ts-expect-error: ignore
+      streetBilling.current.value = streetShipping.current.value;
+      // @ts-expect-error: ignore
+      streetBilling.current.focus();
+    }
     // @ts-expect-error: ignore
-    cityBilling.current.value = cityShipping.current.value;
+    if (cityShipping.current.value) {
+      // @ts-expect-error: ignore
+      cityBilling.current.value = cityShipping.current.value;
+      // @ts-expect-error: ignore
+      cityBilling.current.focus();
+    }
     // @ts-expect-error: ignore
-    countryBilling.current.value = countryShipping.current.value;
+    if (countryShipping.current.value) {
+      // @ts-expect-error: ignore
+      countryBilling.current.value = countryShipping.current.value;
+      // @ts-expect-error: ignore
+      countryBilling.current.focus();
+    }
     // @ts-expect-error: ignore
-    zipBilling.current.value = zipShipping.current.value;
+    if (zipShipping.current.value) {
+      // @ts-expect-error: ignore
+      zipBilling.current.value = zipShipping.current.value;
+      // @ts-expect-error: ignore
+      zipBilling.current.focus();
+    }
   }
 
   if (error) {
@@ -87,7 +112,12 @@ export default function Checkout() {
                   size="md-1"
                   className="d-flex row-1 align-items-center justify-content-center align-content-center"
                 >
-                  <MDBBtn color="info" className="text-center mb-4">
+                  <MDBBtn
+                    type="button"
+                    color="info"
+                    className="text-center mb-4"
+                    onClick={handleClick}
+                  >
                     <MDBIcon fas icon="angle-double-right d-none d-md-block" />
                     <MDBIcon fas icon="angle-double-down d-block d-md-none" />
                   </MDBBtn>
@@ -108,13 +138,7 @@ export default function Checkout() {
                 </MDBCol>
               </MDBRow>
               <MDBRow>
-                <MDBBtn
-                  type="button"
-                  onClick={() => handleClick()}
-                  color="success"
-                >
-                  Submit
-                </MDBBtn>
+                <MDBBtn color="success">Submit</MDBBtn>
               </MDBRow>
             </MDBValidation>
           )}
