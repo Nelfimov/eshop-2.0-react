@@ -14,11 +14,13 @@ import {
   MDBInputGroup,
 } from 'mdb-react-ui-kit';
 import { useContext, useState } from 'react';
-import { CartContext } from '@/context';
+import { CartContext, UserContext } from '@/context';
 import { useRouter } from 'next/router';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
+  // @ts-expect-error: ignore
+  const { id, logout } = useContext(UserContext);
   // @ts-expect-error: ignore
   const { itemCount } = useContext(CartContext);
   const router = useRouter();
@@ -84,15 +86,37 @@ export function Navbar() {
               </Link>
             </MDBNavbarItem>
             <MDBNavbarItem>
-              <Link
-                href="/auth"
-                className={`nav-link ${
-                  router.pathname === '/auth' ? 'active' : ''
-                }`}
-              >
-                <MDBIcon className="me-1" icon="sign-in-alt" />
-                Authorize
-              </Link>
+              {id === '' ? (
+                <Link
+                  href="/auth"
+                  className={`nav-link ${
+                    router.pathname === '/auth' ? 'active' : ''
+                  }`}
+                >
+                  <MDBIcon className="me-1" icon="sign-in-alt" />
+                  Authorize
+                </Link>
+              ) : (
+                <Link
+                  href="#"
+                  onClick={async () => {
+                    const response = await fetch(
+                      'http://localhost:3001/auth/logout',
+                      {
+                        credentials: 'include',
+                      }
+                    );
+                    const data = await response.json();
+                    if (data.success) logout();
+                  }}
+                  className={`nav-link ${
+                    router.pathname === '/auth' ? 'active' : ''
+                  }`}
+                >
+                  <MDBIcon className="me-1" icon="sign-in-alt" />
+                  Logout
+                </Link>
+              )}
             </MDBNavbarItem>
           </MDBNavbarNav>
         </MDBCollapse>

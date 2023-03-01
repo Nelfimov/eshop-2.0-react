@@ -1,12 +1,16 @@
+import { UserContext } from '@/context';
 import { MDBInput, MDBCheckbox, MDBBtn } from 'mdb-react-ui-kit';
 import { NextRouter } from 'next/router';
-import { FormEvent } from 'react';
+import { FormEvent, useContext } from 'react';
 
 interface Props {
   router: NextRouter;
 }
 
 export function LogInForm({ router }: Props) {
+  // @ts-expect-error: ignore
+  const { login } = useContext(UserContext);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -34,10 +38,7 @@ export function LogInForm({ router }: Props) {
     if (!data.success) {
       return console.error(data.message);
     }
-    localStorage.setItem('username', data.user.username);
-    localStorage.setItem('email', data.user.email);
-    localStorage.setItem('userID', data.user.id);
-    localStorage.setItem('isAdmin', data.user.isAdmin);
+    login({ ...data.user });
     router.push('/');
   }
 
