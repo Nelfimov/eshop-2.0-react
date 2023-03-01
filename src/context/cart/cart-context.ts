@@ -1,7 +1,7 @@
 import { Cart, Product } from '@/types';
 import { createContext } from 'react';
 
-export interface CartCon extends Cart {
+export interface ICartContext extends Cart {
   /**
    * Function to remove an item from the cart
    */
@@ -32,4 +32,4 @@ export interface CartCon extends Cart {
   updatePrices: (payload: Product[]) => void;
 }
 
-export const CartContext = createContext<CartCon | null>(null);
+export const CartContext = createContext<ICartContext | null>(null);

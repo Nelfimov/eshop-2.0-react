@@ -1,4 +1,4 @@
-import { ACTION, Cart, CartItem, Product } from '@/types';
+import { CartActions, Cart, CartItem, Product } from '@/types';
 import {
   REMOVE_ITEM,
   ADD_TO_CART,
@@ -23,7 +23,7 @@ export function sumItems(cartItems: CartItem[]) {
   return { itemCount, total };
 }
 
-export function CartReducer(state: Cart, action: ACTION) {
+export function CartReducer(state: Cart, action: CartActions) {
   switch (action.type) {
     case INIT:
       return {
