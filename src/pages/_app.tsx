@@ -3,14 +3,16 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import '@/styles/input.css';
 import type { AppProps } from 'next/app';
 import { Layout } from '@/components';
-import { CartProvider } from '@/context';
+import { CartProvider, UserProvider } from '@/context';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <CartProvider>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </CartProvider>
+    <UserProvider>
+      <CartProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </CartProvider>
+    </UserProvider>
   );
 }
