@@ -34,6 +34,10 @@ export function LogInForm({ router }: Props) {
     if (!data.success) {
       return console.error(data.message);
     }
+    localStorage.setItem('username', data.user.username);
+    localStorage.setItem('email', data.user.email);
+    localStorage.setItem('userID', data.user.id);
+    localStorage.setItem('isAdmin', data.user.isAdmin);
     router.push('/');
   }
 
