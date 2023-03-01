@@ -98,7 +98,7 @@ export function Navbar() {
                 </Link>
               ) : (
                 <Link
-                  href="#"
+                  href=""
                   onClick={async () => {
                     const response = await fetch(
                       'http://localhost:3001/auth/logout',
