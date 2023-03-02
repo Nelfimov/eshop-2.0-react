@@ -14,9 +14,13 @@ import {
 import Head from 'next/head';
 import useSWR from 'swr';
 import { CheckoutForm, Loader } from '@/components';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
+import { UserContext } from '@/context';
+import { Order, Response } from '@/types';
 
 export default function Checkout() {
+  // @ts-expect-error: ignore
+  const { id, login } = useContext(UserContext);
   const { data, error, isLoading, isValidating } = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
     fetcher
@@ -81,38 +85,51 @@ export default function Checkout() {
     try {
       e.preventDefault();
 
-      const responseShippingAddress = await fetch(
-        'http://localhost:3001/addresses/',
-        {
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            street: streetShipping.current!.value,
-            city: cityShipping.current!.value,
-            name: nameShipping.current!.value,
-            zip: zipShipping.current!.value,
-            country: countryShipping.current!.value,
-            fullName: nameShipping.current!.value,
-            type: 'shipping',
-          }),
-        }
-      );
-      const responseBillingAddress = await fetch(
-        'http://localhost:3001/addresses/',
-        {
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            street: streetBilling.current!.value,
-            city: cityBilling.current!.value,
-            name: nameBilling.current!.value,
-            zip: zipBilling.current!.value,
-            country: countryBilling.current!.value,
-            fullName: nameBilling.current!.value,
-            type: 'billing',
-          }),
-        }
-      );
+      if (id === '') {
+        const resRegisterAnon = await fetch(
+          'http://localhost:3001/auth/register-anon/',
+          { credentials: 'include' }
+        );
+        const AnonData = await resRegisterAnon.json();
+        if (AnonData.success) login(AnonData.user);
+      }
+
+      const resShippingAddress = fetch('http://localhost:3001/addresses/', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({
+          street: streetShipping.current!.value,
+          city: cityShipping.current!.value,
+          name: nameShipping.current!.value,
+          zip: zipShipping.current!.value,
+          country: countryShipping.current!.value,
+          fullName: nameShipping.current!.value,
+          type: 'shipping',
+        }),
+      });
+      const resBillingAddress = fetch('http://localhost:3001/addresses/', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({
+          street: streetBilling.current!.value,
+          city: cityBilling.current!.value,
+          name: nameBilling.current!.value,
+          zip: zipBilling.current!.value,
+          country: countryBilling.current!.value,
+          fullName: nameBilling.current!.value,
+          type: 'billing',
+        }),
+      });
+
+      const [shipAddress, billAddress] = await Promise.all([
+        resShippingAddress,
+        resBillingAddress,
+      ]);
+
+      const resOrder = await fetch('http://localhost:3001/orders/', {
+        credentials: 'include',
+      });
+      const dataOrder: Response = await resOrder.json();
     } catch (err) {
       console.error(err);
     }
