@@ -1,4 +1,11 @@
 import { fetcher } from '@/helpers';
+import Head from 'next/head';
+import useSWR from 'swr';
+import { CheckoutForm, Loader } from '@/components';
+import { useContext, useRef, FormEvent } from 'react';
+import { useRouter } from 'next/router';
+import { UserContext } from '@/context';
+import { Response } from '@/types';
 import {
   MDBBtn,
   MDBCard,
@@ -11,14 +18,9 @@ import {
   MDBInput,
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
-import Head from 'next/head';
-import useSWR from 'swr';
-import { CheckoutForm, Loader } from '@/components';
-import React, { useContext, useRef } from 'react';
-import { UserContext } from '@/context';
-import { Order, Response } from '@/types';
 
 export default function Checkout() {
+  const router = useRouter();
   // @ts-expect-error: ignore
   const { id, login } = useContext(UserContext);
   const { data, error, isLoading, isValidating } = useSWR(
@@ -81,7 +83,7 @@ export default function Checkout() {
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     try {
       e.preventDefault();
 
@@ -94,42 +96,61 @@ export default function Checkout() {
         if (AnonData.success) login(AnonData.user);
       }
 
-      const resShippingAddress = fetch('http://localhost:3001/addresses/', {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          street: streetShipping.current!.value,
-          city: cityShipping.current!.value,
-          name: nameShipping.current!.value,
-          zip: zipShipping.current!.value,
-          country: countryShipping.current!.value,
-          fullName: nameShipping.current!.value,
-          type: 'shipping',
-        }),
-      });
-      const resBillingAddress = fetch('http://localhost:3001/addresses/', {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          street: streetBilling.current!.value,
-          city: cityBilling.current!.value,
-          name: nameBilling.current!.value,
-          zip: zipBilling.current!.value,
-          country: countryBilling.current!.value,
-          fullName: nameBilling.current!.value,
-          type: 'billing',
-        }),
-      });
+      const resShippingAddress = (
+        await fetch('http://localhost:3001/addresses/', {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify({
+            street: streetShipping.current!.value,
+            city: cityShipping.current!.value,
+            name: nameShipping.current!.value,
+            zip: zipShipping.current!.value,
+            country: countryShipping.current!.value,
+            fullName: nameShipping.current!.value,
+            type: 'shipping',
+          }),
+        })
+      ).json();
+      const resBillingAddress = (
+        await fetch('http://localhost:3001/addresses/', {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify({
+            street: streetBilling.current!.value,
+            city: cityBilling.current!.value,
+            name: nameBilling.current!.value,
+            zip: zipBilling.current!.value,
+            country: countryBilling.current!.value,
+            fullName: nameBilling.current!.value,
+            type: 'billing',
+          }),
+        })
+      ).json();
 
-      const [shipAddress, billAddress] = await Promise.all([
+      const [shipAddress, billAddress]: Response[] = await Promise.all([
         resShippingAddress,
         resBillingAddress,
       ]);
 
-      const resOrder = await fetch('http://localhost:3001/orders/', {
-        credentials: 'include',
-      });
-      const dataOrder: Response = await resOrder.json();
+      const order: Response = await (
+        await fetch('http://localhost:3001/orders/', {
+          credentials: 'include',
+        })
+      ).json();
+      if (!order.success) return console.error(order);
+
+      const resOrderAddress: Response = await (
+        await fetch(`http://localhost:3001/orders/${order.order}/address`, {
+          method: 'PATCH',
+          credentials: 'include',
+          body: JSON.stringify({
+            shippingAddress: shipAddress.address,
+            billingAddress: billAddress.address,
+          }),
+        })
+      ).json();
+      if (!resOrderAddress.success) return console.error(resOrderAddress);
+      router.push('/cart/checkout/payment');
     } catch (err) {
       console.error(err);
     }
