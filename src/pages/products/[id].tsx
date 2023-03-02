@@ -3,14 +3,14 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { MDBCard } from 'mdb-react-ui-kit';
 import { Product as IProduct } from '@/types';
-import { fetcher } from '@/helpers';
+import { fetcherGetUnauthorized } from '@/helpers';
 import { Loader, ProductBodyImages, ProductHeader } from '@/components';
 
 export default function Product() {
   const router = useRouter();
   const { data, error, isLoading, isValidating } = useSWR(
     router.isReady ? `http://localhost:3001/products/${router.query.id}` : null,
-    fetcher
+    fetcherGetUnauthorized
   );
   const product: IProduct = !isLoading && data?.product;
 

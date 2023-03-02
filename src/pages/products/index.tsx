@@ -1,13 +1,13 @@
 import useSWR from 'swr';
 import Head from 'next/head';
-import { fetcher } from '@/helpers';
+import { fetcherGetUnauthorized } from '@/helpers';
 import { Loader, ProductCard } from '@/components';
 import { MDBCol, MDBRow } from 'mdb-react-ui-kit';
 
 export default function Products() {
   const { data, error, isLoading, isValidating } = useSWR(
     'http://localhost:3001/products',
-    fetcher
+    fetcherGetUnauthorized
   );
 
   if (error) return <h1>Failed to load products</h1>;

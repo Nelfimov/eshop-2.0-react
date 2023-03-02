@@ -4,14 +4,24 @@ import '@/styles/input.css';
 import type { AppProps } from 'next/app';
 import { Layout } from '@/components';
 import { CartProvider, UserProvider } from '@/context';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 export default function App({ Component, pageProps }: AppProps) {
+  const paypalOptions = {
+    'client-id':
+      'AUkvj_6SKJwSUA6EqN3vyWq5Mp6aK7P1vErE6TVjbCoQ7uI_9TCpgc2jMEjmYnKrcqI_MERf-t2j1Rp2',
+    currency: 'EUR',
+    intent: 'capture',
+  };
+
   return (
     <UserProvider>
       <CartProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <PayPalScriptProvider options={paypalOptions}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </PayPalScriptProvider>
       </CartProvider>
     </UserProvider>
   );

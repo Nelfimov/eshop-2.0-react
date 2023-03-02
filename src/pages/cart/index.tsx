@@ -15,7 +15,7 @@ import Head from 'next/head';
 import { useContext, useEffect } from 'react';
 import { CartContext } from '@/context';
 import { CartItem, Product } from '@/types';
-import { fetcher } from '@/helpers';
+import { fetcherGetUnauthorized } from '@/helpers';
 import { ItemList, Loader } from '@/components';
 
 export default function Cart() {
@@ -24,7 +24,10 @@ export default function Cart() {
   const url = `http://localhost:3001/products?ids=${JSON.stringify(
     cart!.cartItems.map((item: CartItem) => item.id)
   )}`;
-  const { data, error, isLoading, isValidating } = useSWR(url, fetcher);
+  const { data, error, isLoading, isValidating } = useSWR(
+    url,
+    fetcherGetUnauthorized
+  );
 
   useEffect(() => {
     !isLoading && cart!.updatePrices(data.products);

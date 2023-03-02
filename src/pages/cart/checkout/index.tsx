@@ -1,4 +1,4 @@
-import { fetcher } from '@/helpers';
+import { fetcherGetUnauthorized } from '@/helpers';
 import Head from 'next/head';
 import useSWR from 'swr';
 import { CheckoutForm, Loader } from '@/components';
@@ -25,7 +25,7 @@ export default function Checkout() {
   const { id, login } = useContext(UserContext);
   const { data, error, isLoading, isValidating } = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
-    fetcher
+    fetcherGetUnauthorized
   );
 
   const email = useRef<HTMLInputElement>(null);
