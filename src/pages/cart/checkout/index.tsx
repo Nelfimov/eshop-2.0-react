@@ -140,7 +140,7 @@ export default function Checkout() {
       if (!order.success) return console.error(order);
 
       const resOrderAddress: Response = await (
-        await fetch(`http://localhost:3001/orders/${order.order}/address`, {
+        await fetch(`http://localhost:3001/orders/${order.order?.id}/address`, {
           method: 'PATCH',
           credentials: 'include',
           body: JSON.stringify({

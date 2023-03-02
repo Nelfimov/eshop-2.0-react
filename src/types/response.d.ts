@@ -1,6 +1,8 @@
+import { Order } from './order';
+
 export interface Response {
   success: boolean;
   message?: string;
-  order?: string;
+  order?: Order;
   address?: string;
 }
