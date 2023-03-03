@@ -1,5 +1,6 @@
 import { fetcherGetAuthorized, fetcherGetUnauthorized } from '@/helpers';
 import {
+  MDBBadge,
   MDBCard,
   MDBCardBody,
   MDBCardFooter,
@@ -52,8 +53,7 @@ export default function Payment() {
             <MDBCardHeader>
               <h1>Payment options </h1>
             </MDBCardHeader>
-            <MDBCardBody>
-              <h2>{products.data && JSON.stringify(products.data.products)}</h2>
+            <MDBCardBody className="">
               <PayPalButtons
                 createOrder={(data, action) => {
                   return action.order.create({
@@ -88,6 +88,7 @@ export default function Payment() {
             <CartSnippet
               products={products.data.products}
               total={cart!.total.toString()}
+              count={cart!.itemCount}
             />
           )}
         </MDBCol>

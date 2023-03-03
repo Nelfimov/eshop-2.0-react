@@ -15,7 +15,7 @@ import Head from 'next/head';
 import { useContext, useEffect } from 'react';
 import { CartContext } from '@/context';
 import { CartItem, Product } from '@/types';
-import { fetcherGetUnauthorized } from '@/helpers';
+import { fetcherGetUnauthorized, formatAsPrice } from '@/helpers';
 import { ItemList, Loader } from '@/components';
 
 export default function Cart() {
@@ -115,12 +115,7 @@ export default function Cart() {
                     <td colSpan={5} align="right">
                       TOTAL:
                     </td>
-                    <td align="center">
-                      {new Intl.NumberFormat(navigator.language, {
-                        style: 'currency',
-                        currency: 'EUR',
-                      }).format(cart!.total)}
-                    </td>
+                    <td align="center">{formatAsPrice(cart!.total)}</td>
                   </tr>
                 </tfoot>
               </MDBTable>
