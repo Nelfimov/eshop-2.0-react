@@ -89,6 +89,7 @@ export default function Payment() {
               products={products.data.products}
               total={cart!.total.toString()}
               count={cart!.itemCount}
+              cart={cart!}
             />
           )}
         </MDBCol>

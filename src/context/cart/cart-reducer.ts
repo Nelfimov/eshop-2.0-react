@@ -19,13 +19,14 @@ export function CartReducer(state: Cart, action: CartActions) {
       return {
         ...state,
         cartItems: [...action.payload.cartItems],
+        ...sumItems([...action.payload.cartItems]),
       };
 
     case 'ADD_TO_CART':
       if (!state.cartItems.find((item) => item.id === action.payload!.id)) {
         state.cartItems.push({
           id: action.payload!.id,
-          price: action.payload!.totalPrice,
+          price: action.payload!.price,
           quantity: 1,
         });
       }
