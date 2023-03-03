@@ -9,3 +9,4 @@ export * from './signup-form';
 export * from './login-form';
 export * from './item-list';
 export * from './checkout-form';
+export * from './cart-snippet';

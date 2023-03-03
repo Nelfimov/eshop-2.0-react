@@ -22,7 +22,7 @@ export default function Cart() {
   const cart = useContext(CartContext);
 
   const url = `http://localhost:3001/products?ids=${JSON.stringify(
-    cart!.cartItems.map((item: CartItem) => item.id)
+    cart!.cartItems.map((item) => item.id)
   )}`;
   const { data, error, isLoading, isValidating } = useSWR(
     url,
