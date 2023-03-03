@@ -84,7 +84,7 @@ export function CartSnippet({ products, cart }: Props) {
             <h6 className="mb-0">Total shipping:</h6>
           </MDBCol>
           <MDBCol align="right">
-            <h6 className="mb-0">{formatAsPrice(totalShipping)}</h6>
+            <h6 className="mb-0">+ {formatAsPrice(totalShipping)}</h6>
           </MDBCol>
         </MDBRow>
       </MDBCardFooter>
@@ -94,7 +94,7 @@ export function CartSnippet({ products, cart }: Props) {
             <h6 className="mb-0">Total discount:</h6>
           </MDBCol>
           <MDBCol align="right">
-            <h6 className="mb-0">{formatAsPrice(totalDiscount)}</h6>
+            <h6 className="mb-0">- {formatAsPrice(totalDiscount)}</h6>
           </MDBCol>
         </MDBRow>
       </MDBCardFooter>
