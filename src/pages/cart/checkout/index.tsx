@@ -194,7 +194,6 @@ export default function Checkout() {
                   name="email"
                   label="Email"
                   ref={email}
-                  value={user?.email ?? ''}
                   required
                 />
               </MDBValidationItem>
