@@ -98,31 +98,37 @@ export default function Checkout() {
 
       const resShippingAddress = (
         await fetch('http://localhost:3001/addresses/', {
+          headers: {
+            'content-type': 'application/json',
+          },
           method: 'POST',
           credentials: 'include',
           body: JSON.stringify({
             street: streetShipping.current!.value,
             city: cityShipping.current!.value,
-            name: nameShipping.current!.value,
             zip: zipShipping.current!.value,
             country: countryShipping.current!.value,
             fullName: nameShipping.current!.value,
             type: 'shipping',
+            email: email.current!.value,
           }),
         })
       ).json();
       const resBillingAddress = (
         await fetch('http://localhost:3001/addresses/', {
+          headers: {
+            'content-type': 'application/json',
+          },
           method: 'POST',
           credentials: 'include',
           body: JSON.stringify({
             street: streetBilling.current!.value,
             city: cityBilling.current!.value,
-            name: nameBilling.current!.value,
             zip: zipBilling.current!.value,
             country: countryBilling.current!.value,
             fullName: nameBilling.current!.value,
             type: 'billing',
+            email: email.current!.value,
           }),
         })
       ).json();
@@ -139,15 +145,23 @@ export default function Checkout() {
       ).json();
       if (!order.success) return console.error(order);
 
+      console.log(order);
+
       const resOrderAddress: Response = await (
-        await fetch(`http://localhost:3001/orders/${order.order?.id}/address`, {
-          method: 'PATCH',
-          credentials: 'include',
-          body: JSON.stringify({
-            shippingAddress: shipAddress.address,
-            billingAddress: billAddress.address,
-          }),
-        })
+        await fetch(
+          `http://localhost:3001/orders/${order.order?._id}/address`,
+          {
+            headers: {
+              'content-type': 'application/json',
+            },
+            method: 'PATCH',
+            credentials: 'include',
+            body: JSON.stringify({
+              shippingAddress: shipAddress.address,
+              billingAddress: billAddress.address,
+            }),
+          }
+        )
       ).json();
       if (!resOrderAddress.success) return console.error(resOrderAddress);
       router.push('/cart/checkout/payment');
