@@ -18,11 +18,11 @@ import {
   MDBInput,
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
+import { userAgent } from 'next/server';
 
 export default function Checkout() {
   const router = useRouter();
-  // @ts-expect-error: ignore
-  const { id, login } = useContext(UserContext);
+  const user = useContext(UserContext);
   const { data, error, isLoading, isValidating } = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
     fetcherGetUnauthorized
@@ -87,13 +87,13 @@ export default function Checkout() {
     try {
       e.preventDefault();
 
-      if (id === '') {
+      if (user?.id === '') {
         const resRegisterAnon = await fetch(
           'http://localhost:3001/auth/register-anon/',
           { credentials: 'include' }
         );
         const AnonData = await resRegisterAnon.json();
-        if (AnonData.success) login(AnonData.user);
+        if (AnonData.success) user.login(AnonData.user);
       }
 
       const resShippingAddress = (
@@ -180,6 +180,7 @@ export default function Checkout() {
                   name="email"
                   label="Email"
                   ref={email}
+                  value={user?.email ?? ''}
                   required
                 />
               </MDBValidationItem>

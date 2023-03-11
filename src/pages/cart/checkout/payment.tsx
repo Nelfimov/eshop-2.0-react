@@ -1,9 +1,7 @@
 import { fetcherGetAuthorized, fetcherGetUnauthorized } from '@/helpers';
 import {
-  MDBBadge,
   MDBCard,
   MDBCardBody,
-  MDBCardFooter,
   MDBCardHeader,
   MDBCol,
   MDBRow,
@@ -11,13 +9,22 @@ import {
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import Head from 'next/head';
 import useSWR from 'swr';
-import { useContext } from 'react';
-import { CartContext } from '@/context';
-import { Product } from '@/types';
+import { useContext, useEffect } from 'react';
+import { CartContext, UserContext } from '@/context';
 import { CartSnippet } from '@/components';
+import { useRouter } from 'next/router';
 
 export default function Payment() {
+  const router = useRouter();
   const cart = useContext(CartContext);
+  const user = useContext(UserContext);
+
+  useEffect(() => {
+    if (user?.id === '') {
+      console.log('You are not authorized');
+      router.push('/');
+    }
+  }, []);
 
   const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
   const products = useSWR(
