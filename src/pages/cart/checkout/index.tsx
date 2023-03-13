@@ -18,12 +18,11 @@ import {
   MDBInput,
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
-import { userAgent } from 'next/server';
 
 export default function Checkout() {
   const router = useRouter();
   const user = useContext(UserContext);
-  const { data, error, isLoading, isValidating } = useSWR(
+  const { data, isLoading, isValidating } = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
     fetcherGetUnauthorized
   );
@@ -144,8 +143,6 @@ export default function Checkout() {
         })
       ).json();
       if (!order.success) return console.error(order);
-
-      console.log(order);
 
       const resOrderAddress: Response = await (
         await fetch(

@@ -102,10 +102,9 @@ export default function Cart() {
                         product={product}
                         index={index + 1}
                         quantity={
-                          // @ts-expect-error: ignore
-                          cart!.cartItems.find(
+                          cart!.cartItems.filter(
                             (item: CartItem) => item.id === product._id
-                          ).quantity
+                          )[0].quantity
                         }
                       />
                     ))}
