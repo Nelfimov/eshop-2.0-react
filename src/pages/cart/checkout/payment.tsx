@@ -7,24 +7,23 @@ import {
   MDBRow,
 } from 'mdb-react-ui-kit';
 import { PayPalButtons } from '@paypal/react-paypal-js';
+import {
+  PurchaseUnit,
+  PurchaseItem,
+} from '@paypal/paypal-js/types/apis/orders';
 import Head from 'next/head';
 import useSWR from 'swr';
-import { useContext, useEffect } from 'react';
-import { CartContext, UserContext } from '@/context';
+import { useContext, useEffect, useState } from 'react';
+import { CartContext } from '@/context';
 import { CartSnippet } from '@/components';
-import { useRouter } from 'next/router';
+import { Product } from '@/types';
 
 export default function Payment() {
-  const router = useRouter();
   const cart = useContext(CartContext);
-  const user = useContext(UserContext);
-
-  useEffect(() => {
-    if (user?.id === '') {
-      console.log('You are not authorized');
-      router.push('/');
-    }
-  }, []);
+  const [cartItems, setCartItems] = useState<PurchaseItem[]>([]);
+  const [itemCost, setItemCost] = useState<Number>(0);
+  const [shippingCost, setShippingCost] = useState<Number>(0);
+  const [discount, setDiscount] = useState<Number>(0);
 
   const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
   const products = useSWR(
@@ -33,6 +32,38 @@ export default function Payment() {
     )}`,
     fetcherGetUnauthorized
   );
+
+  useEffect(() => {
+    if (products.isLoading) return;
+    cart!.updatePrices(products.data.products);
+
+    let result: PurchaseItem[] = [];
+
+    let shipping = 0;
+    let discount = 0;
+    let itemCost = 0;
+
+    products.data.products.forEach((item: Product) => {
+      const quantity =
+        cart!.cartItems.find((_) => item.id === _.id)?.quantity.toString() ??
+        '0';
+
+      result.push({
+        name: item.name,
+        quantity,
+        unit_amount: { value: item.totalPrice.toString() },
+        category: 'PHYSICAL_GOODS',
+      });
+      shipping += item.deliveryPrice * Number(quantity);
+      discount += item.discount * Number(quantity);
+      itemCost += item.price * Number(quantity);
+    });
+
+    setShippingCost(shipping);
+    setDiscount(discount);
+    setItemCost(itemCost);
+    setCartItems(result);
+  }, []);
 
   if (order.error || products.error) {
     return (
@@ -62,29 +93,39 @@ export default function Payment() {
             </MDBCardHeader>
             <MDBCardBody className="">
               <PayPalButtons
+                forceReRender={[itemCost, shippingCost, discount, cart!.total]}
                 createOrder={(data, action) => {
-                  return action.order.create({
-                    purchase_units: [
-                      {
-                        amount: {
-                          value: cart!.total.toString(),
-                          breakdown: {
-                            item_total: { value: '', currency_code: 'EUR' },
-                            shipping: { value: '', currency_code: 'EUR' },
-                            discount: { value: '', currency_code: 'EUR' },
+                  return action.order
+                    .create({
+                      purchase_units: [
+                        {
+                          amount: {
+                            value: cart!.total.toString(),
+                            breakdown: {
+                              item_total: {
+                                value: itemCost.toString(),
+                                currency_code: 'EUR',
+                              },
+                              shipping: {
+                                value: shippingCost.toString(),
+                                currency_code: 'EUR',
+                              },
+                              discount: {
+                                value: discount.toString(),
+                                currency_code: 'EUR',
+                              },
+                            },
                           },
+                          items: cartItems,
                         },
-                        items: [
-                          {
-                            name: '',
-                            quantity: '',
-                            unit_amount: { value: '123' },
-                            category: 'PHYSICAL_GOODS',
-                          },
-                        ],
-                      },
-                    ],
-                  });
+                      ],
+                    })
+                    .then((orderID) => orderID);
+                }}
+                onApprove={(data, actions) => {
+                  return actions
+                    .order!.capture()
+                    .then((res) => console.log('Paypal order: ' + res.id));
                 }}
               />
             </MDBCardBody>
