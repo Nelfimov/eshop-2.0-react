@@ -10,7 +10,6 @@ import {
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import {
   ShippingInfo,
-  PurchaseUnit,
   PurchaseItem,
 } from '@paypal/paypal-js/types/apis/orders';
 import Head from 'next/head';
@@ -18,7 +17,7 @@ import useSWR from 'swr';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '@/context';
 import { CartSnippet } from '@/components';
-import { Address, Order, Product, Response } from '@/types';
+import { Address, Product } from '@/types';
 
 export default function Payment() {
   const cart = useContext(CartContext);
@@ -173,7 +172,7 @@ export default function Payment() {
                           credentials: 'include',
                         })
                       ).json();
-                      const responseOrder = await (
+                      await (
                         await fetch(
                           `http://localhost:3001/orders/${responseGetOrder.order._id}/payment`,
                           {
@@ -188,12 +187,31 @@ export default function Payment() {
                           }
                         )
                       ).json();
+                      const res = await (
+                        await fetch(
+                          `http://localhost:3001/orders/${responseGetOrder.order._id}/items`,
+                          {
+                            method: 'PATCH',
+                            headers: {
+                              'content-type': 'application/json',
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                              cartItems: cart?.cartItems.map((item) => {
+                                return { id: item.id, quantity: item.quantity };
+                              }),
+                            }),
+                          }
+                        )
+                      ).json();
+                      console.log(res);
                     }
                   });
                 }}
                 onCancel={(data, actions) => {
                   return actions.redirect();
                 }}
+                disabled={!shippingDetails && itemCost === 0}
               />
             </MDBCardBody>
           </MDBCard>
