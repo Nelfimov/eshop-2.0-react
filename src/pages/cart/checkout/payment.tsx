@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { fetcherGetAuthorized, fetcherGetUnauthorized } from '@/helpers';
 import {
   MDBCard,
@@ -8,6 +9,7 @@ import {
 } from 'mdb-react-ui-kit';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import {
+  ShippingInfo,
   PurchaseUnit,
   PurchaseItem,
 } from '@paypal/paypal-js/types/apis/orders';
@@ -16,7 +18,7 @@ import useSWR from 'swr';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '@/context';
 import { CartSnippet } from '@/components';
-import { Product } from '@/types';
+import { Address, Order, Product } from '@/types';
 
 export default function Payment() {
   const cart = useContext(CartContext);
@@ -24,6 +26,19 @@ export default function Payment() {
   const [itemCost, setItemCost] = useState<Number>(0);
   const [shippingCost, setShippingCost] = useState<Number>(0);
   const [discount, setDiscount] = useState<Number>(0);
+  const [shippingDetails, setShippingDetails] = useState<ShippingInfo>({
+    address: {
+      country_code: '',
+      address_line_1: '',
+      address_line_2: '',
+      admin_area_1: '',
+      admin_area_2: '',
+      postal_code: '',
+    },
+    email_address: '',
+    name: { full_name: '' },
+    options: [],
+  });
 
   const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
   const products = useSWR(
@@ -32,6 +47,24 @@ export default function Payment() {
     )}`,
     fetcherGetUnauthorized
   );
+
+  useEffect(() => {
+    if (order.isLoading || !order.data.success) return;
+    const orderAddress: Address = order.data.order.addressShipping;
+    setShippingDetails({
+      type: 'SHIPPING',
+      email_address: orderAddress.email,
+      name: {
+        full_name: orderAddress.fullName,
+      },
+      address: {
+        country_code: orderAddress.country,
+        address_line_1: orderAddress.street,
+        admin_area_2: orderAddress.city,
+        postal_code: orderAddress.zip,
+      },
+    });
+  }, []);
 
   useEffect(() => {
     if (products.isLoading) return;
@@ -51,7 +84,10 @@ export default function Payment() {
       result.push({
         name: item.name,
         quantity,
-        unit_amount: { value: item.totalPrice.toString() },
+        unit_amount: {
+          value: item.totalPrice.toString(),
+          currency_code: 'EUR',
+        },
         category: 'PHYSICAL_GOODS',
       });
       shipping += item.deliveryPrice * Number(quantity);
@@ -97,6 +133,10 @@ export default function Payment() {
                 createOrder={(data, action) => {
                   return action.order
                     .create({
+                      application_context: {
+                        shipping_preference: 'SET_PROVIDED_ADDRESS',
+                      },
+                      intent: 'CAPTURE',
                       purchase_units: [
                         {
                           amount: {
@@ -117,6 +157,8 @@ export default function Payment() {
                             },
                           },
                           items: cartItems,
+                          shipping: shippingDetails,
+                          description: 'Antique toys',
                         },
                       ],
                     })

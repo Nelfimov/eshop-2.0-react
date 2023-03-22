@@ -4,7 +4,7 @@ export interface Address {
   _id: Types.ObjectId;
   street: string;
   city: string;
-  zip: number;
+  zip: string;
   country: string;
   fullName: string;
   user?: User | string;
