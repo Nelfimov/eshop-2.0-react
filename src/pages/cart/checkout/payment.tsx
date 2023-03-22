@@ -116,7 +116,12 @@ export default function Payment() {
             </MDBCardHeader>
             <MDBCardBody className="">
               <PayPalButtons
-                forceReRender={[itemCost, shippingCost, discount, cart!.total]}
+                forceReRender={[
+                  itemCost,
+                  shippingCost,
+                  discount,
+                  cart!.totalCart,
+                ]}
                 createOrder={(data, action) => {
                   return action.order
                     .create({
@@ -127,7 +132,7 @@ export default function Payment() {
                       purchase_units: [
                         {
                           amount: {
-                            value: cart!.total.toString(),
+                            value: cart!.totalCart.toString(),
                             breakdown: {
                               item_total: {
                                 value: itemCost.toString(),
@@ -223,7 +228,7 @@ export default function Payment() {
           {products.data && (
             <CartSnippet
               products={products.data.products}
-              total={cart!.total.toString()}
+              total={cart!.totalCart.toString()}
               count={cart!.itemCount}
               cart={cart!}
             />

@@ -5,12 +5,28 @@ export function sumItems(cartItems: CartItem[]) {
     (total, product) => total + product.quantity,
     0
   );
-  const total = parseInt(
+  const totalCart = Number(
     cartItems
       .reduce((total, product) => total + product.price * product.quantity, 0)
       .toFixed(2)
   );
-  return { itemCount, total };
+  const totalDiscount = Number(
+    cartItems
+      .reduce(
+        (total, product) => total + product.discount * product.quantity,
+        0
+      )
+      .toFixed(2)
+  );
+  const totalShipping = Number(
+    cartItems
+      .reduce(
+        (total, product) => total + product.shippingCost * product.quantity,
+        0
+      )
+      .toFixed(2)
+  );
+  return { itemCount, totalCart, totalDiscount, totalShipping };
 }
 
 export function CartReducer(state: Cart, action: CartActions) {
@@ -27,6 +43,8 @@ export function CartReducer(state: Cart, action: CartActions) {
         state.cartItems.push({
           id: action.payload!.id,
           price: action.payload!.price,
+          discount: action.payload!.discount,
+          shippingCost: action.payload!.deliveryPrice,
           quantity: 1,
         });
       }
@@ -71,13 +89,6 @@ export function CartReducer(state: Cart, action: CartActions) {
         ...state,
         ...sumItems(state.cartItems),
         cartItems: [...state.cartItems],
-      };
-
-    case 'CHECKOUT':
-      return {
-        cartItems: [],
-        checkout: true,
-        ...sumItems([]),
       };
 
     case 'CLEAR':

@@ -7,7 +7,6 @@ export function CartProvider({ children }: PropsWithChildren) {
   const initialState = {
     cartItems: [],
     ...sumItems([]),
-    checkout: false,
   };
 
   const [state, dispatch] = useReducer(CartReducer, initialState);
