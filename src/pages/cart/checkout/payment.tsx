@@ -18,7 +18,7 @@ import useSWR from 'swr';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '@/context';
 import { CartSnippet } from '@/components';
-import { Address, Order, Product } from '@/types';
+import { Address, Order, Product, Response } from '@/types';
 
 export default function Payment() {
   const cart = useContext(CartContext);
@@ -26,19 +26,7 @@ export default function Payment() {
   const [itemCost, setItemCost] = useState<Number>(0);
   const [shippingCost, setShippingCost] = useState<Number>(0);
   const [discount, setDiscount] = useState<Number>(0);
-  const [shippingDetails, setShippingDetails] = useState<ShippingInfo>({
-    address: {
-      country_code: '',
-      address_line_1: '',
-      address_line_2: '',
-      admin_area_1: '',
-      admin_area_2: '',
-      postal_code: '',
-    },
-    email_address: '',
-    name: { full_name: '' },
-    options: [],
-  });
+  const [shippingDetails, setShippingDetails] = useState<ShippingInfo>();
 
   const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
   const products = useSWR(
@@ -49,7 +37,7 @@ export default function Payment() {
   );
 
   useEffect(() => {
-    if (order.isLoading || !order.data.success) return;
+    if (order.isLoading || !order.data || !order.data.success) return;
     const orderAddress: Address = order.data.order.addressShipping;
     setShippingDetails({
       type: 'SHIPPING',
@@ -64,10 +52,10 @@ export default function Payment() {
         postal_code: orderAddress.zip,
       },
     });
-  }, []);
+  }, [order.isLoading]);
 
   useEffect(() => {
-    if (products.isLoading) return;
+    if (products.isLoading || !products.data || !products.data.success) return;
     cart!.updatePrices(products.data.products);
 
     let result: PurchaseItem[] = [];
@@ -99,9 +87,9 @@ export default function Payment() {
     setDiscount(discount);
     setItemCost(itemCost);
     setCartItems(result);
-  }, []);
+  }, [order.isLoading]);
 
-  if (order.error || products.error) {
+  if (!order || products.error) {
     return (
       <>
         <Head>
@@ -165,9 +153,46 @@ export default function Payment() {
                     .then((orderID) => orderID);
                 }}
                 onApprove={(data, actions) => {
-                  return actions
-                    .order!.capture()
-                    .then((res) => console.log('Paypal order: ' + res.id));
+                  return actions.order!.capture().then(async (res) => {
+                    const responsePayment = await (
+                      await fetch('http://localhost:3001/payments/', {
+                        credentials: 'include',
+                        headers: {
+                          'content-type': 'application/json',
+                        },
+                        method: 'POST',
+                        body: JSON.stringify({
+                          transactionID: res.id,
+                          type: 'paypal',
+                        }),
+                      })
+                    ).json();
+                    if (responsePayment.success) {
+                      const responseGetOrder = await (
+                        await fetch('http://localhost:3001/orders/', {
+                          credentials: 'include',
+                        })
+                      ).json();
+                      const responseOrder = await (
+                        await fetch(
+                          `http://localhost:3001/orders/${responseGetOrder.order._id}/payment`,
+                          {
+                            method: 'PATCH',
+                            headers: {
+                              'content-type': 'application/json',
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                              paymentID: responsePayment.payment._id,
+                            }),
+                          }
+                        )
+                      ).json();
+                    }
+                  });
+                }}
+                onCancel={(data, actions) => {
+                  return actions.redirect();
                 }}
               />
             </MDBCardBody>
