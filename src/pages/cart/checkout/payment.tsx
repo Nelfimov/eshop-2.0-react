@@ -172,39 +172,42 @@ export default function Payment() {
                           credentials: 'include',
                         })
                       ).json();
-                      await (
-                        await fetch(
-                          `http://localhost:3001/orders/${responseGetOrder.order._id}/payment`,
-                          {
-                            method: 'PATCH',
-                            headers: {
-                              'content-type': 'application/json',
-                            },
-                            credentials: 'include',
-                            body: JSON.stringify({
-                              paymentID: responsePayment.payment._id,
+                      await fetch(
+                        `http://localhost:3001/orders/${responseGetOrder.order._id}/payment`,
+                        {
+                          method: 'PATCH',
+                          headers: {
+                            'content-type': 'application/json',
+                          },
+                          credentials: 'include',
+                          body: JSON.stringify({
+                            paymentID: responsePayment.payment._id,
+                          }),
+                        }
+                      );
+                      await fetch(
+                        `http://localhost:3001/orders/${responseGetOrder.order._id}/items`,
+                        {
+                          method: 'PATCH',
+                          headers: {
+                            'content-type': 'application/json',
+                          },
+                          credentials: 'include',
+                          body: JSON.stringify({
+                            cartItems: cart?.cartItems.map((item) => {
+                              return { id: item.id, quantity: item.quantity };
                             }),
-                          }
-                        )
-                      ).json();
-                      const res = await (
-                        await fetch(
-                          `http://localhost:3001/orders/${responseGetOrder.order._id}/items`,
-                          {
-                            method: 'PATCH',
-                            headers: {
-                              'content-type': 'application/json',
-                            },
-                            credentials: 'include',
-                            body: JSON.stringify({
-                              cartItems: cart?.cartItems.map((item) => {
-                                return { id: item.id, quantity: item.quantity };
-                              }),
-                            }),
-                          }
-                        )
-                      ).json();
-                      console.log(res);
+                          }),
+                        }
+                      );
+                      await fetch(
+                        `http://localhost:3001/orders/${responseGetOrder.order._id}/ordered`,
+                        {
+                          credentials: 'include',
+                          method: 'PATCH',
+                        }
+                      );
+                      cart!.clearCart();
                     }
                   });
                 }}
