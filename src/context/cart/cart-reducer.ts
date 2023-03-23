@@ -111,7 +111,16 @@ export function CartReducer(state: Cart, action: CartActions) {
       action.payload.forEach((product: Product) => {
         state.cartItems[
           state.cartItems.findIndex((item) => item.id === product._id)
-        ].price = product.totalPrice;
+        ].price = product.price;
+        state.cartItems[
+          state.cartItems.findIndex((item) => item.id === product._id)
+        ].discount = product.discount;
+        state.cartItems[
+          state.cartItems.findIndex((item) => item.id === product._id)
+        ].shippingCost = product.deliveryPrice;
+        state.cartItems[
+          state.cartItems.findIndex((item) => item.id === product._id)
+        ].totalPrice = product.totalPrice;
       });
       return {
         ...state,
