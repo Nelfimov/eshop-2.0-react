@@ -1,4 +1,4 @@
 export * from './fetcher';
 export * from './validate-email';
-export * from './cookie';
 export * from './price-format';
+export * from './register';

@@ -1,8 +1,20 @@
-import { fetcherGetAuthorized, fetcherGetUnauthorized } from '@/helpers';
+import {
+  createAddress,
+  fetcherGetAuthorized,
+  fetcherGetUnauthorized,
+  registerAnonUser,
+} from '@/helpers';
 import Head from 'next/head';
 import useSWR from 'swr';
 import { CheckoutForm, Loader } from '@/components';
-import { useContext, useRef, FormEvent, useEffect, useState } from 'react';
+import {
+  useContext,
+  useRef,
+  FormEvent,
+  useEffect,
+  useState,
+  RefObject,
+} from 'react';
 import { useRouter } from 'next/router';
 import { UserContext } from '@/context';
 import { Order, Response } from '@/types';
@@ -100,59 +112,55 @@ export default function Checkout() {
     }
   }
 
+  function checkFields(fields: RefObject<HTMLInputElement>[]) {
+    return fields.every((item) => item.current?.value);
+  }
+
   async function handleSubmit(e: FormEvent) {
     try {
       e.preventDefault();
 
+      if (
+        !checkFields([
+          email,
+          nameShipping,
+          streetShipping,
+          cityShipping,
+          countryShipping,
+          zipShipping,
+          nameBilling,
+          streetBilling,
+          cityBilling,
+          countryBilling,
+          zipBilling,
+        ])
+      )
+        return;
+
       if (user?.id === '') {
-        const resRegisterAnon = await fetch(
-          'http://localhost:3001/auth/register-anon/',
-          { credentials: 'include' }
-        );
-        const AnonData = await resRegisterAnon.json();
-        if (AnonData.success) user.login(AnonData.user);
+        const reg = await registerAnonUser(user);
+        if (!reg) return;
       }
 
-      const resShippingAddress = (
-        await fetch('http://localhost:3001/addresses/', {
-          headers: {
-            'content-type': 'application/json',
-          },
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            street: streetShipping.current!.value,
-            city: cityShipping.current!.value,
-            zip: zipShipping.current!.value,
-            country: countryShipping.current!.value,
-            fullName: nameShipping.current!.value,
-            type: 'shipping',
-            email: email.current!.value,
-          }),
-        })
-      ).json();
-      const resBillingAddress = (
-        await fetch('http://localhost:3001/addresses/', {
-          headers: {
-            'content-type': 'application/json',
-          },
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            street: streetBilling.current!.value,
-            city: cityBilling.current!.value,
-            zip: zipBilling.current!.value,
-            country: countryBilling.current!.value,
-            fullName: nameBilling.current!.value,
-            type: 'billing',
-            email: email.current!.value,
-          }),
-        })
-      ).json();
-
-      const [shipAddress, billAddress]: Response[] = await Promise.all([
-        resShippingAddress,
-        resBillingAddress,
+      const [shippingAddress, billingAddress]: Response[] = await Promise.all([
+        createAddress({
+          type: 'billing',
+          street: streetBilling.current!.value,
+          city: cityBilling.current!.value,
+          country: countryBilling.current!.value,
+          email: email.current!.value,
+          fullName: nameBilling.current!.value,
+          zip: zipBilling.current!.value,
+        }),
+        createAddress({
+          type: 'shipping',
+          street: streetShipping.current!.value,
+          city: cityShipping.current!.value,
+          country: countryShipping.current!.value,
+          email: email.current!.value,
+          fullName: nameShipping.current!.value,
+          zip: zipShipping.current!.value,
+        }),
       ]);
 
       const order: Response = await (
@@ -172,8 +180,8 @@ export default function Checkout() {
             method: 'PATCH',
             credentials: 'include',
             body: JSON.stringify({
-              shippingAddress: shipAddress.address,
-              billingAddress: billAddress.address,
+              shippingAddress: shippingAddress.address,
+              billingAddress: billingAddress.address,
             }),
           }
         )
@@ -190,7 +198,7 @@ export default function Checkout() {
       <Head>
         <title>Checkout | Jetzt ist die beste Zeit</title>
       </Head>
-      <MDBModal show={modal} tabIndex={-1}>
+      <MDBModal show={modal}>
         <MDBModalDialog>
           <MDBModalContent>
             <MDBModalHeader>
