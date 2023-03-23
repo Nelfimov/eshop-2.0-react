@@ -87,7 +87,7 @@ export default function Cart() {
                       Total amount
                     </th>
                     <th
-                      style={{ textAlign: 'center', width: '50px' }}
+                      style={{ textAlign: 'center', width: '150px' }}
                       scope="col"
                     >
                       Delete?
@@ -110,11 +110,33 @@ export default function Cart() {
                     ))}
                 </MDBTableBody>
                 <tfoot>
+                  <tr className="table-secondary">
+                    <td colSpan={5} align="right">
+                      Total items:
+                    </td>
+                    <td align="center">{formatAsPrice(cart!.totalItems)}</td>
+                  </tr>
+                  <tr className="table-secondary">
+                    <td colSpan={5} align="right">
+                      Total discounts:
+                    </td>
+                    <td align="center">
+                      -{formatAsPrice(cart!.totalDiscounts)}
+                    </td>
+                  </tr>
+                  <tr className="table-secondary">
+                    <td colSpan={5} align="right">
+                      Total shipping:
+                    </td>
+                    <td align="center">
+                      +{formatAsPrice(cart!.totalShippings)}
+                    </td>
+                  </tr>
                   <tr className="table-info fw-bold">
                     <td colSpan={5} align="right">
                       TOTAL:
                     </td>
-                    <td align="center">{formatAsPrice(cart!.total)}</td>
+                    <td align="center">{formatAsPrice(cart!.totalCart)}</td>
                   </tr>
                 </tfoot>
               </MDBTable>

@@ -5,12 +5,12 @@ export function sumItems(cartItems: CartItem[]) {
     (total, product) => total + product.quantity,
     0
   );
-  const totalCart = Number(
+  const totalItems = Number(
     cartItems
       .reduce((total, product) => total + product.price * product.quantity, 0)
       .toFixed(2)
   );
-  const totalDiscount = Number(
+  const totalDiscounts = Number(
     cartItems
       .reduce(
         (total, product) => total + product.discount * product.quantity,
@@ -18,7 +18,7 @@ export function sumItems(cartItems: CartItem[]) {
       )
       .toFixed(2)
   );
-  const totalShipping = Number(
+  const totalShippings = Number(
     cartItems
       .reduce(
         (total, product) => total + product.shippingCost * product.quantity,
@@ -26,7 +26,15 @@ export function sumItems(cartItems: CartItem[]) {
       )
       .toFixed(2)
   );
-  return { itemCount, totalCart, totalDiscount, totalShipping };
+  const totalCart = Number(
+    cartItems
+      .reduce(
+        (total, product) => total + product.totalPrice! * product.quantity,
+        0
+      )
+      .toFixed(2)
+  );
+  return { itemCount, totalCart, totalDiscounts, totalShippings, totalItems };
 }
 
 export function CartReducer(state: Cart, action: CartActions) {
@@ -45,6 +53,7 @@ export function CartReducer(state: Cart, action: CartActions) {
           price: action.payload!.price,
           discount: action.payload!.discount,
           shippingCost: action.payload!.deliveryPrice,
+          totalPrice: action.payload!.totalPrice,
           quantity: 1,
         });
       }
