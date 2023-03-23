@@ -22,9 +22,6 @@ import { Address, Product } from '@/types';
 export default function Payment() {
   const cart = useContext(CartContext);
   const [cartItems, setCartItems] = useState<PurchaseItem[]>([]);
-  const [itemCost, setItemCost] = useState<Number>(0);
-  const [shippingCost, setShippingCost] = useState<Number>(0);
-  const [discount, setDiscount] = useState<Number>(0);
   const [shippingDetails, setShippingDetails] = useState<ShippingInfo>();
 
   const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
@@ -59,10 +56,6 @@ export default function Payment() {
 
     let result: PurchaseItem[] = [];
 
-    let shipping = 0;
-    let discount = 0;
-    let itemCost = 0;
-
     products.data.products.forEach((item: Product) => {
       const quantity =
         cart!.cartItems.find((_) => item.id === _.id)?.quantity.toString() ??
@@ -77,14 +70,8 @@ export default function Payment() {
         },
         category: 'PHYSICAL_GOODS',
       });
-      shipping += item.deliveryPrice * Number(quantity);
-      discount += item.discount * Number(quantity);
-      itemCost += item.price * Number(quantity);
     });
 
-    setShippingCost(shipping);
-    setDiscount(discount);
-    setItemCost(itemCost);
     setCartItems(result);
   }, [order.isLoading]);
 
@@ -116,12 +103,7 @@ export default function Payment() {
             </MDBCardHeader>
             <MDBCardBody className="">
               <PayPalButtons
-                forceReRender={[
-                  itemCost,
-                  shippingCost,
-                  discount,
-                  cart!.totalCart,
-                ]}
+                forceReRender={[cart!.totalCart]}
                 createOrder={(data, action) => {
                   return action.order
                     .create({
@@ -135,15 +117,15 @@ export default function Payment() {
                             value: cart!.totalCart.toString(),
                             breakdown: {
                               item_total: {
-                                value: itemCost.toString(),
+                                value: cart!.totalItems.toString(),
                                 currency_code: 'EUR',
                               },
                               shipping: {
-                                value: shippingCost.toString(),
+                                value: cart!.totalShippings.toString(),
                                 currency_code: 'EUR',
                               },
                               discount: {
-                                value: discount.toString(),
+                                value: cart!.totalDiscounts.toString(),
                                 currency_code: 'EUR',
                               },
                             },
@@ -219,7 +201,7 @@ export default function Payment() {
                 onCancel={(data, actions) => {
                   return actions.redirect();
                 }}
-                disabled={!shippingDetails && itemCost === 0}
+                disabled={!shippingDetails || cart!.totalCart === 0}
               />
             </MDBCardBody>
           </MDBCard>
