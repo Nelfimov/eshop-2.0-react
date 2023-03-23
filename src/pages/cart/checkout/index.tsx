@@ -1,11 +1,11 @@
-import { fetcherGetUnauthorized } from '@/helpers';
+import { fetcherGetAuthorized, fetcherGetUnauthorized } from '@/helpers';
 import Head from 'next/head';
 import useSWR from 'swr';
 import { CheckoutForm, Loader } from '@/components';
-import { useContext, useRef, FormEvent } from 'react';
+import { useContext, useRef, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { UserContext } from '@/context';
-import { Response } from '@/types';
+import { Order, Response } from '@/types';
 import {
   MDBBtn,
   MDBCard,
@@ -17,15 +17,33 @@ import {
   MDBValidation,
   MDBInput,
   MDBValidationItem,
+  MDBModal,
+  MDBModalDialog,
+  MDBModalContent,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModalBody,
+  MDBModalFooter,
 } from 'mdb-react-ui-kit';
 
 export default function Checkout() {
   const router = useRouter();
   const user = useContext(UserContext);
-  const { data, isLoading, isValidating } = useSWR(
+  const [modal, setModal] = useState(false);
+  const toggleShow = () => setModal(!modal);
+  const countriesList = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
     fetcherGetUnauthorized
   );
+  const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
+
+  useEffect(() => {
+    if (order.isLoading || !order.data || order.error || !order.data.success)
+      return;
+    const loadedOrder: Order = order.data.order;
+    if (loadedOrder.addressShipping && loadedOrder.addressBilling)
+      setModal(true);
+  }, [order.isLoading]);
 
   const email = useRef<HTMLInputElement>(null);
   const nameShipping = useRef<HTMLInputElement>(null);
@@ -172,12 +190,41 @@ export default function Checkout() {
       <Head>
         <title>Checkout | Jetzt ist die beste Zeit</title>
       </Head>
+      <MDBModal show={modal} tabIndex={-1}>
+        <MDBModalDialog>
+          <MDBModalContent>
+            <MDBModalHeader>
+              <MDBModalTitle>Address found</MDBModalTitle>
+              <MDBBtn
+                className="btn-close"
+                color="none"
+                onClick={toggleShow}
+              ></MDBBtn>
+            </MDBModalHeader>
+            <MDBModalBody>
+              Your order already has filled in address. Would you like to use
+              it?
+            </MDBModalBody>
+            <MDBModalFooter>
+              <MDBBtn color="secondary" onClick={toggleShow}>
+                Close
+              </MDBBtn>
+              <MDBBtn
+                color="primary"
+                onClick={() => router.push('/cart/checkout/payment')}
+              >
+                Continue with this address
+              </MDBBtn>
+            </MDBModalFooter>
+          </MDBModalContent>
+        </MDBModalDialog>
+      </MDBModal>
       <MDBCard>
         <MDBCardHeader>
           <h1>Checkout</h1>
         </MDBCardHeader>
         <MDBCardBody>
-          {isLoading || isValidating ? (
+          {countriesList.isLoading || countriesList.isValidating ? (
             <Loader />
           ) : (
             <MDBValidation onSubmit={handleSubmit}>
@@ -199,7 +246,7 @@ export default function Checkout() {
                   <h2>Delivery address</h2>
                   <CheckoutForm
                     name="delivery"
-                    data={data}
+                    data={countriesList.data}
                     refs={[
                       nameShipping,
                       streetShipping,
@@ -227,7 +274,7 @@ export default function Checkout() {
                   <h2>Billing address</h2>
                   <CheckoutForm
                     name="billing"
-                    data={data}
+                    data={countriesList.data}
                     refs={[
                       nameBilling,
                       streetBilling,
