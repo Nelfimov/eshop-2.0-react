@@ -19,11 +19,11 @@ import { useRouter } from 'next/router';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
-  // @ts-expect-error: ignore
-  const { id, logout } = useContext(UserContext);
-  // @ts-expect-error: ignore
-  const { itemCount } = useContext(CartContext);
+  const user = useContext(UserContext);
+  const cart = useContext(CartContext);
   const router = useRouter();
+
+  const toggleShow = () => setShowNavToggler(!showNavToggler);
 
   return (
     <MDBNavbar fixed="top" expand="lg" light bgColor="light">
@@ -49,7 +49,7 @@ export function Navbar() {
                 </MDBInputGroup>
               </form>
             </MDBNavbarItem>
-            <MDBNavbarItem>
+            <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
               <Link
                 href="/"
                 className={`nav-link ${
@@ -60,7 +60,7 @@ export function Navbar() {
                 Home
               </Link>
             </MDBNavbarItem>
-            <MDBNavbarItem>
+            <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
               <Link
                 href="/products"
                 className={`nav-link ${
@@ -71,22 +71,22 @@ export function Navbar() {
                 Catalogue
               </Link>
             </MDBNavbarItem>
-            <MDBNavbarItem>
+            <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
               <Link
                 href="/cart"
                 className={`nav-link d-flex align-items-center ${
                   router.pathname === '/cart' ? 'active' : ''
                 }`}
               >
-                {itemCount > 0 ? (
-                  <MDBBadge color="danger">{itemCount}</MDBBadge>
+                {cart!.itemCount > 0 ? (
+                  <MDBBadge color="danger">{cart!.itemCount}</MDBBadge>
                 ) : null}
                 <MDBIcon className="me-1" icon="shopping-cart" />
                 Cart
               </Link>
             </MDBNavbarItem>
-            <MDBNavbarItem>
-              {id === '' ? (
+            <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
+              {user!.id === '' ? (
                 <Link
                   href="/auth"
                   className={`nav-link ${
@@ -107,7 +107,7 @@ export function Navbar() {
                       }
                     );
                     const data = await response.json();
-                    if (data.success) logout();
+                    if (data.success) user!.logout();
                   }}
                   className={`nav-link ${
                     router.pathname === '/auth' ? 'active' : ''

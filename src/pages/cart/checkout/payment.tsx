@@ -18,8 +18,10 @@ import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '@/context';
 import { CartSnippet, Loader } from '@/components';
 import { Address, Product } from '@/types';
+import { useRouter } from 'next/router';
 
 export default function Payment() {
+  const router = useRouter();
   const [{ isPending }] = usePayPalScriptReducer();
   const cart = useContext(CartContext);
   const [cartItems, setCartItems] = useState<PurchaseItem[]>([]);
@@ -35,7 +37,8 @@ export default function Payment() {
 
   useEffect(() => {
     if (order.isLoading || !order.data || !order.data.success) return;
-    const orderAddress: Address = order.data.order.addressShipping;
+    const orderAddress: Address | undefined = order.data.order.addressShipping;
+    if (!orderAddress) return;
     setShippingDetails({
       type: 'SHIPPING',
       email_address: orderAddress.email,
@@ -199,6 +202,7 @@ export default function Payment() {
                           }
                         );
                         cart!.clearCart();
+                        router.push('/');
                       }
                     });
                   }}
