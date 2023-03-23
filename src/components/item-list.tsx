@@ -20,7 +20,7 @@ export function ItemList({ product, index, quantity }: Props) {
       <td align="center">
         <Link href={`/products/${product._id}`}>{product.name}</Link>
       </td>
-      <td align="center">
+      <td align="center" style={{ minWidth: '130px' }}>
         <MDBBtn
           className="p-1 me-1"
           color="danger"

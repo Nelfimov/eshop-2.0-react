@@ -74,10 +74,7 @@ export default function Cart() {
                     <th style={{ textAlign: 'center' }} scope="col">
                       Name
                     </th>
-                    <th
-                      style={{ textAlign: 'center', width: '150px' }}
-                      scope="col"
-                    >
+                    <th style={{ textAlign: 'center' }} scope="col">
                       Quantity
                     </th>
                     <th style={{ textAlign: 'center' }} scope="col">
