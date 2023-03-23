@@ -24,7 +24,7 @@ export default function Payment() {
   const router = useRouter();
   const [{ isPending }] = usePayPalScriptReducer();
   const cart = useContext(CartContext);
-  const [cartItems, setCartItems] = useState<PurchaseItem[]>([]);
+  const [cartItems, setCartItems] = useState<PurchaseItem[]>();
   const [shippingDetails, setShippingDetails] = useState<ShippingInfo>();
 
   const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
@@ -36,47 +36,53 @@ export default function Payment() {
   );
 
   useEffect(() => {
-    if (order.isLoading || !order.data || !order.data.success) return;
-    const orderAddress: Address | undefined = order.data.order.addressShipping;
-    if (!orderAddress) return;
-    setShippingDetails({
-      type: 'SHIPPING',
-      email_address: orderAddress.email,
-      name: {
-        full_name: orderAddress.fullName,
-      },
-      address: {
-        country_code: orderAddress.country,
-        address_line_1: orderAddress.street,
-        admin_area_2: orderAddress.city,
-        postal_code: orderAddress.zip,
-      },
-    });
-  }, [order.isLoading]);
+    if (!products.isLoading && products.data && products.data.success) {
+      cart!.updatePrices(products.data.products);
+      const productsArray: Product[] = products.data.products;
 
-  useEffect(() => {
-    if (products.isLoading || !products.data || !products.data.success) return;
-    cart!.updatePrices(products.data.products);
+      console.log('DOING');
 
-    let result: PurchaseItem[] = [];
+      setCartItems(
+        productsArray.map((item) => {
+          const quantity =
+            cart!.cartItems
+              .find((_) => item.id === _.id)
+              ?.quantity.toString() ?? '0';
+          return {
+            name: item.name,
+            quantity,
+            unit_amount: {
+              value: item.price.toString(),
+              currency_code: 'EUR',
+            },
+            category: 'PHYSICAL_GOODS',
+          };
+        })
+      );
 
-    products.data.products.forEach((item: Product) => {
-      const quantity =
-        cart!.cartItems.find((_) => item.id === _.id)?.quantity.toString() ??
-        '0';
+      console.log(cartItems);
+    }
 
-      result.push({
-        name: item.name,
-        quantity,
-        unit_amount: {
-          value: item.totalPrice.toString(),
-          currency_code: 'EUR',
+    if (!order.isLoading && order.data && order.data.success) {
+      const orderAddress: Address | undefined =
+        order.data.order.addressShipping;
+      if (!orderAddress) return;
+      setShippingDetails({
+        type: 'SHIPPING',
+        email_address: orderAddress.email,
+        name: {
+          full_name: orderAddress.fullName,
         },
-        category: 'PHYSICAL_GOODS',
+        address: {
+          country_code: orderAddress.country,
+          address_line_1: orderAddress.street,
+          admin_area_2: orderAddress.city,
+          postal_code: orderAddress.zip,
+        },
       });
-    });
 
-    setCartItems(result);
+      console.log(shippingDetails);
+    }
   }, [order.isLoading]);
 
   if (!order || products.error) {
@@ -110,8 +116,15 @@ export default function Payment() {
                 <Loader />
               ) : (
                 <PayPalButtons
-                  forceReRender={[cart!.totalCart]}
+                  forceReRender={[cart?.totalCart, shippingDetails, cartItems]}
                   createOrder={(data, action) => {
+                    console.log('Total cart: ' + cart!.totalCart);
+                    console.log('    Total items: ' + cart!.totalItems);
+                    console.log('    Total shipping: ' + cart!.totalShippings);
+                    console.log('    Total discount: ' + cart!.totalDiscounts);
+
+                    console.log(cartItems);
+                    console.log(shippingDetails);
                     return action.order
                       .create({
                         application_context: {
