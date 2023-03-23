@@ -1,4 +1,6 @@
 import {
+  addAddressesToOrder,
+  copyShippingToBilling,
   createAddress,
   fetcherGetAuthorized,
   fetcherGetUnauthorized,
@@ -6,7 +8,7 @@ import {
 } from '@/helpers';
 import Head from 'next/head';
 import useSWR from 'swr';
-import { CheckoutForm, Loader } from '@/components';
+import { CheckoutForm, CheckoutModal, Loader } from '@/components';
 import {
   useContext,
   useRef,
@@ -29,13 +31,6 @@ import {
   MDBValidation,
   MDBInput,
   MDBValidationItem,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-  MDBModalFooter,
 } from 'mdb-react-ui-kit';
 
 export default function Checkout() {
@@ -70,46 +65,22 @@ export default function Checkout() {
   const zipBilling = useRef<HTMLInputElement>(null);
 
   function handleClick() {
-    if (
-      nameShipping.current &&
-      nameBilling.current &&
-      nameShipping.current.value
-    ) {
-      nameBilling.current.value = nameShipping.current.value;
-      nameBilling.current.focus();
-    }
-    if (
-      streetShipping.current &&
-      streetBilling.current &&
-      streetShipping.current.value
-    ) {
-      streetBilling.current.value = streetShipping.current.value;
-      streetBilling.current.focus();
-    }
-    if (
-      cityShipping.current &&
-      cityBilling.current &&
-      cityShipping.current.value
-    ) {
-      cityBilling.current.value = cityShipping.current.value;
-      cityBilling.current.focus();
-    }
-    if (
-      countryShipping.current &&
-      countryBilling.current &&
-      countryShipping.current.value
-    ) {
-      countryBilling.current.value = countryShipping.current.value;
-      countryBilling.current.focus();
-    }
-    if (
-      zipShipping.current &&
-      zipBilling.current &&
-      zipShipping.current.value
-    ) {
-      zipBilling.current.value = zipShipping.current.value;
-      zipBilling.current.focus();
-    }
+    const source = [
+      nameShipping,
+      streetShipping,
+      cityShipping,
+      countryShipping,
+      zipShipping,
+    ];
+    const target = [
+      nameBilling,
+      streetBilling,
+      cityBilling,
+      countryBilling,
+      zipBilling,
+    ];
+    for (let [index, value] of source.entries())
+      copyShippingToBilling(value, target[index]);
   }
 
   function checkFields(fields: RefObject<HTMLInputElement>[]) {
@@ -119,7 +90,7 @@ export default function Checkout() {
   async function handleSubmit(e: FormEvent) {
     try {
       e.preventDefault();
-
+      if (!order.data) return console.error(order);
       if (
         !checkFields([
           email,
@@ -163,30 +134,15 @@ export default function Checkout() {
         }),
       ]);
 
-      const order: Response = await (
-        await fetch('http://localhost:3001/orders/', {
-          credentials: 'include',
-        })
-      ).json();
-      if (!order.success) return console.error(order);
+      const orderID: string = order.data.order._id;
 
-      const resOrderAddress: Response = await (
-        await fetch(
-          `http://localhost:3001/orders/${order.order?._id}/address`,
-          {
-            headers: {
-              'content-type': 'application/json',
-            },
-            method: 'PATCH',
-            credentials: 'include',
-            body: JSON.stringify({
-              shippingAddress: shippingAddress.address,
-              billingAddress: billingAddress.address,
-            }),
-          }
-        )
-      ).json();
-      if (!resOrderAddress.success) return console.error(resOrderAddress);
+      const result = await addAddressesToOrder(
+        orderID,
+        shippingAddress.address!,
+        billingAddress.address!
+      );
+
+      if (!result.success) return console.error(result.message);
       router.push('/cart/checkout/payment');
     } catch (err) {
       console.error(err);
@@ -198,35 +154,11 @@ export default function Checkout() {
       <Head>
         <title>Checkout | Jetzt ist die beste Zeit</title>
       </Head>
-      <MDBModal show={modal}>
-        <MDBModalDialog>
-          <MDBModalContent>
-            <MDBModalHeader>
-              <MDBModalTitle>Address found</MDBModalTitle>
-              <MDBBtn
-                className="btn-close"
-                color="none"
-                onClick={toggleShow}
-              ></MDBBtn>
-            </MDBModalHeader>
-            <MDBModalBody>
-              Your order already has filled in address. Would you like to use
-              it?
-            </MDBModalBody>
-            <MDBModalFooter>
-              <MDBBtn color="secondary" onClick={toggleShow}>
-                Close
-              </MDBBtn>
-              <MDBBtn
-                color="primary"
-                onClick={() => router.push('/cart/checkout/payment')}
-              >
-                Continue with this address
-              </MDBBtn>
-            </MDBModalFooter>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
+      <CheckoutModal
+        action={toggleShow}
+        show={modal}
+        redirect={() => router.push('/cart/checkout/payment')}
+      />
       <MDBCard>
         <MDBCardHeader>
           <h1>Checkout</h1>

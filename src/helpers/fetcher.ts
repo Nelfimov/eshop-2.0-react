@@ -1,4 +1,5 @@
-import { Response } from '@/types';
+import { IUserContext } from '@/context';
+import { Address, Response } from '@/types';
 
 export const fetcherGetUnauthorized = (url: string) =>
   fetch(url).then((res) => res.json());
@@ -48,4 +49,38 @@ export async function createAddress({
       }),
     })
   ).json();
+}
+
+export async function registerAnonUser(user: IUserContext) {
+  const response: Response = await (
+    await fetch('http://localhost:3001/auth/register-anon/', {
+      credentials: 'include',
+    })
+  ).json();
+  if (response.user) user.login(response.user);
+  return response.success;
+}
+
+export async function addAddressesToOrder(
+  orderID: string,
+  shippingAddress: Address,
+  billingAddress: Address
+) {
+  const response: Response = await (
+    await fetch(`http://localhost:3001/orders/${orderID}/address`, {
+      headers: {
+        'content-type': 'application/json',
+      },
+      method: 'PATCH',
+      credentials: 'include',
+      body: JSON.stringify({
+        shippingAddress,
+        billingAddress,
+      }),
+    })
+  ).json();
+
+  return response.success
+    ? { success: response.success }
+    : { success: response.success, message: response.message };
 }

@@ -10,3 +10,4 @@ export * from './login-form';
 export * from './item-list';
 export * from './checkout-form';
 export * from './cart-snippet';
+export * from './checkout-modal';
