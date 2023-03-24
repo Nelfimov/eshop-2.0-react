@@ -9,3 +9,7 @@ export function copyShippingToBilling(
     target.current.focus();
   }
 }
+
+export function checkFields(fields: RefObject<HTMLInputElement>[]) {
+  return fields.every((item) => item.current?.value);
+}

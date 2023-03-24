@@ -1,5 +1,6 @@
 import {
   addAddressesToOrder,
+  checkFields,
   copyShippingToBilling,
   createAddress,
   fetcherGetAuthorized,
@@ -13,9 +14,10 @@ import {
   useContext,
   useRef,
   FormEvent,
-  useEffect,
   useState,
-  RefObject,
+  SetStateAction,
+  Dispatch,
+  useMemo,
 } from 'react';
 import { useRouter } from 'next/router';
 import { UserContext } from '@/context';
@@ -36,20 +38,36 @@ import {
 export default function Checkout() {
   const router = useRouter();
   const user = useContext(UserContext);
-  const [modal, setModal] = useState(false);
-  const toggleShow = () => setModal(!modal);
+  const [modalOrderWithAddress, setModalOrderWithAddress] = useState(false);
+  const [modalPreviousAddress, setModalPreviousAddress] = useState(false);
+  const toggleShow = (
+    action: Dispatch<SetStateAction<boolean>>,
+    state: boolean
+  ) => action(!state);
   const countriesList = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
     fetcherGetUnauthorized
   );
   const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
+  const address = useSWR(
+    'http://localhost:3001/addresses/',
+    fetcherGetAuthorized
+  );
 
-  useEffect(() => {
+  useMemo(() => {
+    if (!address.isLoading && address.data && address.data.success) {
+      if (address.data.addresses.length > 0) {
+        setModalPreviousAddress(true);
+      }
+    }
+  }, [address.isLoading]);
+
+  useMemo(() => {
     if (order.isLoading || !order.data || order.error || !order.data.success)
       return;
     const loadedOrder: Order = order.data.order;
     if (loadedOrder.addressShipping && loadedOrder.addressBilling)
-      setModal(true);
+      setModalOrderWithAddress(true);
   }, [order.isLoading]);
 
   const email = useRef<HTMLInputElement>(null);
@@ -81,10 +99,6 @@ export default function Checkout() {
     ];
     for (let [index, value] of source.entries())
       copyShippingToBilling(value, target[index]);
-  }
-
-  function checkFields(fields: RefObject<HTMLInputElement>[]) {
-    return fields.every((item) => item.current?.value);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -155,8 +169,15 @@ export default function Checkout() {
         <title>Checkout | Jetzt ist die beste Zeit</title>
       </Head>
       <CheckoutModal
-        action={toggleShow}
-        show={modal}
+        action={() =>
+          toggleShow(setModalOrderWithAddress, modalOrderWithAddress)
+        }
+        show={modalOrderWithAddress}
+        redirect={() => router.push('/cart/checkout/payment')}
+      />
+      <CheckoutModal
+        action={() => toggleShow(setModalPreviousAddress, modalPreviousAddress)}
+        show={modalPreviousAddress}
         redirect={() => router.push('/cart/checkout/payment')}
       />
       <MDBCard>
