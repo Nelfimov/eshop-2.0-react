@@ -18,10 +18,11 @@ import {
   SetStateAction,
   Dispatch,
   useMemo,
+  useCallback,
 } from 'react';
 import { useRouter } from 'next/router';
 import { UserContext } from '@/context';
-import { Order, Response } from '@/types';
+import { Address, Order, Response } from '@/types';
 import {
   MDBBtn,
   MDBCard,
@@ -40,10 +41,11 @@ export default function Checkout() {
   const user = useContext(UserContext);
   const [modalOrderWithAddress, setModalOrderWithAddress] = useState(false);
   const [modalPreviousAddress, setModalPreviousAddress] = useState(false);
-  const toggleShow = (
-    action: Dispatch<SetStateAction<boolean>>,
-    state: boolean
-  ) => action(!state);
+  const toggleShow = useCallback(
+    (action: Dispatch<SetStateAction<boolean>>, state: boolean) =>
+      action(!state),
+    []
+  );
   const countriesList = useSWR(
     'https://restcountries.com/v3.1/subregion/eu',
     fetcherGetUnauthorized
@@ -52,6 +54,22 @@ export default function Checkout() {
   const address = useSWR(
     'http://localhost:3001/addresses/',
     fetcherGetAuthorized
+  );
+
+  const applyAddresses = useCallback(
+    () =>
+      addAddressesToOrder(
+        order.data.order.id,
+        address.data &&
+          address.data.addresses.find(
+            (address: Address) => address.type === 'billing'
+          ),
+        address.data &&
+          address.data.addresses.find(
+            (address: Address) => address.type === 'billing'
+          )
+      ),
+    [order.isLoading, address.isLoading]
   );
 
   useMemo(() => {
@@ -168,18 +186,46 @@ export default function Checkout() {
       <Head>
         <title>Checkout | Jetzt ist die beste Zeit</title>
       </Head>
-      <CheckoutModal
-        action={() =>
-          toggleShow(setModalOrderWithAddress, modalOrderWithAddress)
-        }
-        show={modalOrderWithAddress}
-        redirect={() => router.push('/cart/checkout/payment')}
-      />
-      <CheckoutModal
-        action={() => toggleShow(setModalPreviousAddress, modalPreviousAddress)}
-        show={modalPreviousAddress}
-        redirect={() => router.push('/cart/checkout/payment')}
-      />
+      {modalOrderWithAddress && (
+        <CheckoutModal
+          showAction={() =>
+            toggleShow(setModalOrderWithAddress, modalOrderWithAddress)
+          }
+          show={modalOrderWithAddress}
+          redirect={() => router.push('/cart/checkout/payment')}
+          content={
+            'Your order already contains addresses. Would you like to continue with it?'
+          }
+          addressBilling={order.data && order.data.order.addressBilling}
+          addressShipping={order.data && order.data.order.addressShipping}
+        />
+      )}
+      {modalPreviousAddress && (
+        <CheckoutModal
+          showAction={() =>
+            toggleShow(setModalPreviousAddress, modalPreviousAddress)
+          }
+          show={modalPreviousAddress}
+          redirect={() => router.push('/cart/checkout/payment')}
+          content={
+            'We have found your previous address you used for ordering. Would you like to use it again?'
+          }
+          addressBilling={
+            address.data &&
+            address.data.addresses.find(
+              (address: Address) => address.type === 'billing'
+            )
+          }
+          addressShipping={
+            address.data &&
+            address.data.addresses.find(
+              (address: Address) => address.type === 'shipping'
+            )
+          }
+          action={applyAddresses}
+        />
+      )}
+
       <MDBCard>
         <MDBCardHeader>
           <h1>Checkout</h1>

@@ -14,7 +14,7 @@ import {
 } from '@paypal/paypal-js/types/apis/orders';
 import Head from 'next/head';
 import useSWR from 'swr';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { CartContext } from '@/context';
 import { CartSnippet, Loader } from '@/components';
 import { Address, Product } from '@/types';
@@ -35,34 +35,31 @@ export default function Payment() {
     fetcherGetUnauthorized
   );
 
-  useEffect(() => {
+  useMemo(() => {
     if (!products.isLoading && products.data && products.data.success) {
       cart!.updatePrices(products.data.products);
       const productsArray: Product[] = products.data.products;
 
-      console.log('DOING');
+      const result: PurchaseItem[] = productsArray.map((item) => {
+        const quantity =
+          cart!.cartItems.find((_) => item.id === _.id)?.quantity.toString() ??
+          '0';
+        return {
+          name: item.name,
+          quantity,
+          unit_amount: {
+            value: item.price.toString(),
+            currency_code: 'EUR',
+          },
+          category: 'PHYSICAL_GOODS',
+        };
+      });
 
-      setCartItems(
-        productsArray.map((item) => {
-          const quantity =
-            cart!.cartItems
-              .find((_) => item.id === _.id)
-              ?.quantity.toString() ?? '0';
-          return {
-            name: item.name,
-            quantity,
-            unit_amount: {
-              value: item.price.toString(),
-              currency_code: 'EUR',
-            },
-            category: 'PHYSICAL_GOODS',
-          };
-        })
-      );
-
-      console.log(cartItems);
+      setCartItems(result);
     }
+  }, [products.isLoading]);
 
+  useMemo(() => {
     if (!order.isLoading && order.data && order.data.success) {
       const orderAddress: Address | undefined =
         order.data.order.addressShipping;
@@ -80,8 +77,6 @@ export default function Payment() {
           postal_code: orderAddress.zip,
         },
       });
-
-      console.log(shippingDetails);
     }
   }, [order.isLoading]);
 
