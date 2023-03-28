@@ -14,7 +14,7 @@ import {
 } from '@paypal/paypal-js/types/apis/orders';
 import Head from 'next/head';
 import useSWR from 'swr';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { CartContext } from '@/context';
 import { CartSnippet, Loader } from '@/components';
 import { Address, Product } from '@/types';
@@ -111,7 +111,6 @@ export default function Payment() {
                 <Loader />
               ) : (
                 <PayPalButtons
-                  forceReRender={[cart?.totalCart, shippingDetails, cartItems]}
                   createOrder={(data, action) => {
                     console.log('Total cart: ' + cart!.totalCart);
                     console.log('    Total items: ' + cart!.totalItems);

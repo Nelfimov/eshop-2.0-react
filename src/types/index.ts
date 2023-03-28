@@ -6,3 +6,4 @@ export * from './user';
 export * from './address';
 export * from './order';
 export * from './response';
+export * from './notification';
