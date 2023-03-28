@@ -5,12 +5,7 @@ import { Notification } from './notification';
 import { Notification as INotification } from '@/types';
 
 export function NotificationProvider(props: any) {
-  const [notifications, setNotifications] = useState<INotification[]>([
-    {
-      id: 0,
-      content: '',
-    },
-  ]);
+  const [notifications, setNotifications] = useState<INotification[]>([]);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -34,7 +29,7 @@ export function NotificationProvider(props: any) {
 
   if (!mounted) return null;
 
-  return typeof window === 'object' ? (
+  return (
     <NotificationContext.Provider value={contextValue}>
       {props.children}
 
@@ -54,5 +49,5 @@ export function NotificationProvider(props: any) {
           )
         : null}
     </NotificationContext.Provider>
-  ) : null;
+  );
 }

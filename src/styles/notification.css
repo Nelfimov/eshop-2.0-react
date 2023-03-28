@@ -1,0 +1,40 @@
+.Notification {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 5px;
+  align-items: center;
+  position: fixed;
+  color: white;
+  font-weight: bold;
+  background-color: rgb(177, 177, 255);
+  box-sizing: border-box;
+  top: 120px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 16px 24px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  animation: 0.3s forwards linear unhide;
+}
+
+.Notification button {
+  background-color: transparent;
+  cursor: pointer;
+  padding: 3px;
+  border: 0;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border-radius: 5px;
+}
+
+@keyframes unhide {
+  from {
+    filter: opacity(0);
+  }
+
+  to {
+    filter: opacity(100);
+  }
+}

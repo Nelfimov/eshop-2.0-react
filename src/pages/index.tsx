@@ -7,7 +7,7 @@ export default function Home() {
   const notification = useNotification();
 
   useEffect(() => {
-    notification?.open('Hello there');
+    notification!.open('Hello there');
   }, []);
 
   return (
