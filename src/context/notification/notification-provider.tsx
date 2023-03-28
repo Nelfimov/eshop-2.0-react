@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { NotificationContext } from './notification-context';
 import { Notification } from './notification';
@@ -11,6 +11,13 @@ export function NotificationProvider(props: any) {
       content: '',
     },
   ]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    return () => setMounted(false);
+  }, []);
 
   const open = (content: string) =>
     setNotifications((currentNotifications) => [
@@ -25,23 +32,27 @@ export function NotificationProvider(props: any) {
 
   const contextValue = useMemo(() => ({ id: 0, content: '', open, close }), []);
 
-  return (
+  if (!mounted) return null;
+
+  return typeof window === 'object' ? (
     <NotificationContext.Provider value={contextValue}>
       {props.children}
 
-      {createPortal(
-        <div className="notification-wrapper">
-          {notifications.map((notification) => (
-            <Notification
-              key={notification.id}
-              close={() => close(notification.id)}
-            >
-              {notification.content}
-            </Notification>
-          ))}
-        </div>,
-        document.body
-      )}
+      {mounted
+        ? createPortal(
+            <div className="notification-wrapper">
+              {notifications.map((notification) => (
+                <Notification
+                  key={notification.id}
+                  close={() => close(notification.id)}
+                >
+                  {notification.content}
+                </Notification>
+              ))}
+            </div>,
+            document.body
+          )
+        : null}
     </NotificationContext.Provider>
-  );
+  ) : null;
 }

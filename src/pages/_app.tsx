@@ -5,6 +5,7 @@ import type { AppProps } from 'next/app';
 import { Layout } from '@/components';
 import { CartProvider, UserProvider } from '@/context';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { NotificationProvider } from '@/context/notification';
 
 export default function App({ Component, pageProps }: AppProps) {
   const paypalOptions = {
@@ -18,9 +19,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <UserProvider>
       <CartProvider>
         <PayPalScriptProvider options={paypalOptions}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <NotificationProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </NotificationProvider>
         </PayPalScriptProvider>
       </CartProvider>
     </UserProvider>

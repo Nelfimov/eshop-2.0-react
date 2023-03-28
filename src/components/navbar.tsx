@@ -13,17 +13,24 @@ import {
   MDBBadge,
   MDBInputGroup,
 } from 'mdb-react-ui-kit';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CartContext, UserContext } from '@/context';
 import { useRouter } from 'next/router';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const user = useContext(UserContext);
   const cart = useContext(CartContext);
   const router = useRouter();
 
-  const toggleShow = () => setShowNavToggler(!showNavToggler);
+  useEffect(() => {
+    setMounted(true);
+
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <MDBNavbar fixed="top" expand="lg" light bgColor="light">

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTimeout } from '@/hooks/use-timeout';
-import '../../styles/Notification.css';
 
 interface Props {
   close: () => void;
