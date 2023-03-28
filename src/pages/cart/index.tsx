@@ -17,9 +17,11 @@ import { CartContext } from '@/context';
 import { CartItem, Product } from '@/types';
 import { fetcherGetUnauthorized, formatAsPrice } from '@/helpers';
 import { ItemList, Loader } from '@/components';
+import { useNotification } from '@/hooks';
 
 export default function Cart() {
   const cart = useContext(CartContext);
+  const notification = useNotification();
 
   const url = `http://localhost:3001/products?ids=${JSON.stringify(
     cart!.cartItems.map((item) => item.id)
@@ -30,6 +32,7 @@ export default function Cart() {
   );
 
   useEffect(() => {
+    notification?.open('Hey again');
     !isLoading && cart!.updatePrices(data.products);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

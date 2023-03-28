@@ -14,16 +14,26 @@ export function NotificationProvider(props: any) {
     return () => setMounted(false);
   }, []);
 
-  const open = (content: string) =>
+  const open = (content: string) => {
     setNotifications((currentNotifications) => [
       ...currentNotifications,
       { id: Math.random(), content },
     ]);
+  };
 
-  const close = (id: number) =>
-    setNotifications((currentNotifications) =>
-      currentNotifications.filter((notification) => notification.id !== id)
+  const close = (id: number) => {
+    const element = document.querySelector(
+      `.Notification[data-react-key="${id.toString()}"]`
     );
+    element?.classList.add('hide');
+    setTimeout(
+      () =>
+        setNotifications((currentNotifications) =>
+          currentNotifications.filter((notification) => notification.id !== id)
+        ),
+      300
+    );
+  };
 
   const contextValue = useMemo(() => ({ id: 0, content: '', open, close }), []);
 
@@ -40,6 +50,7 @@ export function NotificationProvider(props: any) {
                 <Notification
                   key={notification.id}
                   close={() => close(notification.id)}
+                  reactKey={notification.id}
                 >
                   {notification.content}
                 </Notification>

@@ -4,9 +4,9 @@
   gap: 5px;
   align-items: center;
   position: fixed;
-  color: white;
+  color: #2c58a0;
   font-weight: bold;
-  background-color: rgb(177, 177, 255);
+  background-color: #dfe7f6;
   box-sizing: border-box;
   top: 120px;
   left: 50%;
@@ -15,7 +15,16 @@
   border-radius: 10px;
   border: 1px solid transparent;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  animation: 0.3s forwards linear unhide;
+  animation: 0.3s linear unhide both;
+}
+
+.Notification:hover {
+  opacity: 1;
+}
+
+.Notification.hide {
+  opacity: 0;
+  transition: all 0.3s;
 }
 
 .Notification button {
@@ -23,7 +32,7 @@
   cursor: pointer;
   padding: 3px;
   border: 0;
-  color: white;
+  color: #2c58a0;
   font-weight: bold;
   font-size: 1.5rem;
   border-radius: 5px;
@@ -35,6 +44,16 @@
   }
 
   to {
+    filter: opacity(80);
+  }
+}
+
+@keyframes hide {
+  0% {
     filter: opacity(100);
+  }
+
+  99% {
+    filter: opacity(0);
   }
 }
