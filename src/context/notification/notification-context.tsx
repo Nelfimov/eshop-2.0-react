@@ -2,7 +2,7 @@ import { Notification } from '@/types';
 import { createContext } from 'react';
 
 export interface INotificationContext extends Notification {
-  open: (content: string) => void;
+  open: (title: string, content: string, customClass?: 'error') => void;
   close: (close: number) => void;
 }
 

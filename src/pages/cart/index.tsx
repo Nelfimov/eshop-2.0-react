@@ -32,7 +32,7 @@ export default function Cart() {
   );
 
   useEffect(() => {
-    notification?.open('Hey again');
+    notification?.open('Hey again', 'this is a new notification');
     !isLoading && cart!.updatePrices(data.products);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, PropsWithChildren } from 'react';
 import { createPortal } from 'react-dom';
 import { NotificationContext } from './notification-context';
 import { Notification } from './notification';
 import { Notification as INotification } from '@/types';
 
-export function NotificationProvider(props: any) {
+export function NotificationProvider(props: PropsWithChildren) {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [mounted, setMounted] = useState(false);
 
@@ -14,10 +14,10 @@ export function NotificationProvider(props: any) {
     return () => setMounted(false);
   }, []);
 
-  const open = (content: string) => {
+  const open = (title: string, content: string, customClass?: 'error') => {
     setNotifications((currentNotifications) => [
       ...currentNotifications,
-      { id: Math.random(), content },
+      { id: Math.random(), content, title, customClass },
     ]);
   };
 
@@ -35,7 +35,10 @@ export function NotificationProvider(props: any) {
     );
   };
 
-  const contextValue = useMemo(() => ({ id: 0, content: '', open, close }), []);
+  const contextValue = useMemo(
+    () => ({ id: 0, content: '', title: '', open, close }),
+    []
+  );
 
   if (!mounted) return null;
 
@@ -51,9 +54,14 @@ export function NotificationProvider(props: any) {
                   key={notification.id}
                   close={() => close(notification.id)}
                   reactKey={notification.id}
-                >
-                  {notification.content}
-                </Notification>
+                  title={notification.title}
+                  content={notification.content}
+                  customClass={
+                    notification.customClass
+                      ? notification.customClass
+                      : undefined
+                  }
+                />
               ))}
             </div>,
             document.body
