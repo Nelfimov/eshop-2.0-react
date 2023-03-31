@@ -1,4 +1,5 @@
 import { UserContext } from '@/context';
+import { useNotification } from '@/hooks';
 import { MDBInput, MDBCheckbox, MDBBtn } from 'mdb-react-ui-kit';
 import { NextRouter } from 'next/router';
 import { FormEvent, useContext } from 'react';
@@ -10,6 +11,7 @@ interface Props {
 export function LogInForm({ router }: Props) {
   // @ts-expect-error: ignore
   const { login } = useContext(UserContext);
+  const notification = useNotification();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -36,9 +38,11 @@ export function LogInForm({ router }: Props) {
     });
     const data = await response.json();
     if (!data.success) {
-      return console.error(data.message);
+      notification?.open('Error', data.message, 'error');
+      return;
     }
     login({ ...data.user });
+    notification?.open('Success', 'Successfully logged in');
     router.push('/');
   }
 

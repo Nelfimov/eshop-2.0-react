@@ -1,4 +1,6 @@
+import { UserContext } from '@/context';
 import { validateEmail } from '@/helpers';
+import { useNotification } from '@/hooks';
 import {
   MDBInput,
   MDBBtn,
@@ -6,7 +8,7 @@ import {
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
 import { NextRouter } from 'next/router';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useContext, useState } from 'react';
 
 interface Props {
   router: NextRouter;
@@ -19,6 +21,8 @@ export function SignUpForm({ router }: Props) {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
+  const notification = useNotification();
+  const user = useContext(UserContext);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setErrors({});
@@ -92,8 +96,12 @@ export function SignUpForm({ router }: Props) {
     });
     const data = await response.json();
     if (!data.success) {
-      return console.error(data.message);
+      notification?.open('Error', data.message, 'error');
+      return;
     }
+
+    notification?.open('Success', 'Succesfully logged in');
+    user?.login({ ...data.user });
     router.push('/');
   }
 

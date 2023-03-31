@@ -1,15 +1,7 @@
-import { useNotification } from '@/hooks';
 import { MDBCarousel, MDBCarouselItem } from 'mdb-react-ui-kit';
 import Head from 'next/head';
-import { useEffect } from 'react';
 
 export default function Home() {
-  const notification = useNotification();
-
-  useEffect(() => {
-    notification!.open('Hello there', 'hey', 'error');
-  }, []);
-
   return (
     <>
       <Head>
