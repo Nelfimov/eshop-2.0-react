@@ -2,6 +2,9 @@ import Link from 'next/link';
 import {
   MDBCollapse,
   MDBContainer,
+  MDBDropdown,
+  MDBDropdownMenu,
+  MDBDropdownToggle,
   MDBIcon,
   MDBNavbar,
   MDBNavbarBrand,
@@ -12,6 +15,7 @@ import {
   MDBBtn,
   MDBBadge,
   MDBInputGroup,
+  MDBDropdownItem,
 } from 'mdb-react-ui-kit';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext, UserContext } from '@/context';
@@ -56,6 +60,25 @@ export function Navbar() {
                 </MDBInputGroup>
               </form>
             </MDBNavbarItem>
+            {user?.isAdmin ? (
+              <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
+                <MDBDropdown>
+                  <MDBDropdownToggle tag="a" className="nav-link" role="button">
+                    Admin
+                  </MDBDropdownToggle>
+                  <MDBDropdownMenu>
+                    <MDBDropdownItem link>
+                      <Link href="/" className="nav-link">
+                        <MDBIcon className="me-1" icon="home" />
+                        Create new item
+                      </Link>
+                    </MDBDropdownItem>
+                    <MDBDropdownItem link>Orders</MDBDropdownItem>
+                    <MDBDropdownItem link>Create new item</MDBDropdownItem>
+                  </MDBDropdownMenu>
+                </MDBDropdown>
+              </MDBNavbarItem>
+            ) : null}
             <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
               <Link
                 href="/"

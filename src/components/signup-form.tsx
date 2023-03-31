@@ -19,6 +19,7 @@ export function SignUpForm({ router }: Props) {
     email: '',
     password: '',
     confirmPassword: '',
+    secret: '',
   });
   const [errors, setErrors] = useState({});
   const notification = useNotification();
@@ -84,8 +85,11 @@ export function SignUpForm({ router }: Props) {
     const { value: password } = document.getElementById(
       'password'
     ) as HTMLInputElement;
+    const { value: secret } = document.getElementById(
+      'secret'
+    ) as HTMLInputElement;
 
-    const body = { email, password };
+    const body = { email, password, secret };
     const response = await fetch(process.env.backEndUrl + 'auth/register', {
       method: 'POST',
       credentials: 'include',
@@ -153,6 +157,22 @@ export function SignUpForm({ router }: Props) {
           id="confirmPassword"
           value={formInput.confirmPassword}
           label="Confirm password"
+          onChange={handleChange}
+          required
+        />
+      </MDBValidationItem>
+      <MDBValidationItem
+        // @ts-expect-error: ignore
+        feedback={errors['secret']}
+        className="mb-3 pb-1"
+        invalid
+      >
+        <MDBInput
+          type="password"
+          name="secret"
+          id="secret"
+          value={formInput.secret}
+          label="Secret"
           onChange={handleChange}
           required
         />
