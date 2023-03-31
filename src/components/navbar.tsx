@@ -61,7 +61,7 @@ export function Navbar() {
               </form>
             </MDBNavbarItem>
             {user?.isAdmin ? (
-              <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
+              <MDBNavbarItem>
                 <MDBDropdown>
                   <MDBDropdownToggle tag="a" className="nav-link" role="button">
                     Admin
