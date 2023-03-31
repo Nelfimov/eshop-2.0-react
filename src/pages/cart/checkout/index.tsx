@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   addAddressesToOrder,
   checkFields,
@@ -50,9 +51,12 @@ export default function Checkout() {
     'https://restcountries.com/v3.1/subregion/eu',
     fetcherGetUnauthorized
   );
-  const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
+  const order = useSWR(
+    process.env.backEndUrl + 'orders/',
+    fetcherGetAuthorized
+  );
   const address = useSWR(
-    'http://localhost:3001/addresses/',
+    process.env.backEndUrl + 'addresses/',
     fetcherGetAuthorized
   );
 

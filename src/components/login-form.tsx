@@ -26,7 +26,7 @@ export function LogInForm({ router }: Props) {
     }
 
     const body = { email, password };
-    const response = await fetch('http://localhost:3001/auth/login', {
+    const response = await fetch(process.env.backEndUrl + 'auth/login', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

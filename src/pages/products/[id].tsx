@@ -9,7 +9,9 @@ import { Loader, ProductBodyImages, ProductHeader } from '@/components';
 export default function Product() {
   const router = useRouter();
   const { data, error, isLoading, isValidating } = useSWR(
-    router.isReady ? `http://localhost:3001/products/${router.query.id}` : null,
+    router.isReady
+      ? `${process.env.backEndUrl}products/${router.query.id}`
+      : null,
     fetcherGetUnauthorized
   );
   const product: IProduct = !isLoading && data?.product;

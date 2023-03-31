@@ -27,9 +27,12 @@ export default function Payment() {
   const [cartItems, setCartItems] = useState<PurchaseItem[]>();
   const [shippingDetails, setShippingDetails] = useState<ShippingInfo>();
 
-  const order = useSWR('http://localhost:3001/orders/', fetcherGetAuthorized);
+  const order = useSWR(
+    process.env.backEndUrl + 'orders/',
+    fetcherGetAuthorized
+  );
   const products = useSWR(
-    `http://localhost:3001/products?ids=${JSON.stringify(
+    `${process.env.backEndUrl}products?ids=${JSON.stringify(
       cart!.cartItems.map((item) => item.id)
     )}`,
     fetcherGetUnauthorized

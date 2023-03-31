@@ -23,7 +23,7 @@ export default function Cart() {
   const cart = useContext(CartContext);
   const notification = useNotification();
 
-  const url = `http://localhost:3001/products?ids=${JSON.stringify(
+  const url = `${process.env.backEndUrl}products?ids=${JSON.stringify(
     cart!.cartItems.map((item) => item.id)
   )}`;
   const { data, error, isLoading, isValidating } = useSWR(
