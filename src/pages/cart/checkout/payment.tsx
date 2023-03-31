@@ -19,8 +19,10 @@ import { CartContext } from '@/context';
 import { CartSnippet, Loader } from '@/components';
 import { Address, Product } from '@/types';
 import { useRouter } from 'next/router';
+import { useNotification } from '@/hooks';
 
 export default function Payment() {
+  const notification = useNotification();
   const router = useRouter();
   const [{ isPending }] = usePayPalScriptReducer();
   const cart = useContext(CartContext);
@@ -212,6 +214,10 @@ export default function Payment() {
                           }
                         );
                         cart!.clearCart();
+                        notification?.open(
+                          'Success',
+                          'Your order has been paid and placed. We will contact you soon for delivery info.'
+                        );
                         router.push('/');
                       }
                     });
