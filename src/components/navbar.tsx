@@ -64,12 +64,13 @@ export function Navbar() {
               <MDBNavbarItem>
                 <MDBDropdown>
                   <MDBDropdownToggle tag="a" className="nav-link" role="button">
+                    <MDBIcon icon="toolbox" className="me-1" size="lg" />
                     Admin
                   </MDBDropdownToggle>
                   <MDBDropdownMenu>
                     <MDBDropdownItem link>
-                      <Link href="/" className="nav-link">
-                        <MDBIcon className="me-1" icon="home" />
+                      <Link href="/admin/new-item" className="nav-link">
+                        <MDBIcon fas icon="plus" className="me-1" size="lg" />
                         Create new item
                       </Link>
                     </MDBDropdownItem>
