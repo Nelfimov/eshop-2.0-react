@@ -48,7 +48,7 @@ export default function AdminItems() {
               <MDBTable responsive="sm" striped hover align="middle">
                 <MDBTableHead light>
                   <tr>
-                    <th scope="col">
+                    <th scope="col" style={{ width: '10px' }}>
                       <MDBCheckbox />
                     </th>
                     <th scope="col">id</th>
