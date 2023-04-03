@@ -12,6 +12,7 @@ import {
   MDBCheckbox,
 } from 'mdb-react-ui-kit';
 import Head from 'next/head';
+import Link from 'next/link';
 import useSWR from 'swr';
 
 export default function AdminItems() {
@@ -48,10 +49,15 @@ export default function AdminItems() {
               <MDBTable responsive="sm" striped hover align="middle">
                 <MDBTableHead light>
                   <tr>
-                    <th scope="col" style={{ width: '10px' }}>
+                    <th scope="col" style={{ width: '30px' }}>
                       <MDBCheckbox />
                     </th>
-                    <th scope="col">id</th>
+                    <th
+                      scope="col"
+                      style={{ width: '50px', padding: 'auto 0' }}
+                    >
+                      id
+                    </th>
                     <th scope="col">Name</th>
                     <th style={{ textAlign: 'right' }} scope="col">
                       On stock
@@ -74,16 +80,22 @@ export default function AdminItems() {
                         <td>
                           <MDBCheckbox />
                         </td>
-                        <td>{product._id}</td>
-                        <td>{product.name}</td>
+                        <td>
+                          <Link href={`/products/${product._id}`}>
+                            {product._id}
+                          </Link>
+                        </td>
+                        <td>
+                          <Link href={`/products/${product._id}`}>
+                            {product.name}
+                          </Link>
+                        </td>
                         <td align="right">{product.quantityOnStock}</td>
-                        <td align="right">{formatAsPrice(product.price)} </td>
+                        <td align="right">{formatAsPrice(product.price)}</td>
                         <td align="right">
-                          {formatAsPrice(product.deliveryPrice)}{' '}
+                          {formatAsPrice(product.deliveryPrice)}
                         </td>
-                        <td align="right">
-                          {formatAsPrice(product.discount)}{' '}
-                        </td>
+                        <td align="right">{formatAsPrice(product.discount)}</td>
                       </tr>
                     ))}
                 </MDBTableBody>
