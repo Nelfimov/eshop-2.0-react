@@ -2,9 +2,6 @@ import Link from 'next/link';
 import {
   MDBCollapse,
   MDBContainer,
-  MDBDropdown,
-  MDBDropdownMenu,
-  MDBDropdownToggle,
   MDBIcon,
   MDBNavbar,
   MDBNavbarBrand,
@@ -15,11 +12,11 @@ import {
   MDBBtn,
   MDBBadge,
   MDBInputGroup,
-  MDBDropdownItem,
 } from 'mdb-react-ui-kit';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext, UserContext } from '@/context';
 import { useRouter } from 'next/router';
+import { AdminDropdown } from './admin';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
@@ -60,26 +57,7 @@ export function Navbar() {
                 </MDBInputGroup>
               </form>
             </MDBNavbarItem>
-            {user?.isAdmin ? (
-              <MDBNavbarItem>
-                <MDBDropdown>
-                  <MDBDropdownToggle tag="a" className="nav-link" role="button">
-                    <MDBIcon icon="toolbox" className="me-1" size="lg" />
-                    Admin
-                  </MDBDropdownToggle>
-                  <MDBDropdownMenu>
-                    <MDBDropdownItem link>
-                      <Link href="/admin/new-item" className="nav-link">
-                        <MDBIcon fas icon="plus" className="me-1" size="lg" />
-                        Create new item
-                      </Link>
-                    </MDBDropdownItem>
-                    <MDBDropdownItem link>Orders</MDBDropdownItem>
-                    <MDBDropdownItem link>Create new item</MDBDropdownItem>
-                  </MDBDropdownMenu>
-                </MDBDropdown>
-              </MDBNavbarItem>
-            ) : null}
+            {user?.isAdmin ? <AdminDropdown /> : null}
             <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
               <Link
                 href="/"
