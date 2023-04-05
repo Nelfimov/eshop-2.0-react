@@ -13,13 +13,22 @@ import {
 } from 'mdb-react-ui-kit';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 export default function AdminItems() {
+  const [query, setQuery] = useState('');
   const { data, error, isLoading, isValidating } = useSWR(
     process.env.backEndUrl + 'products',
     fetcherGetAuthorized
   );
+
+  const filteredProducts = useMemo(() => {
+    if (!data) return;
+    return data.products.filter((product: Product) =>
+      product.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [data, query]);
 
   if (error)
     return (
@@ -45,7 +54,11 @@ export default function AdminItems() {
             <Loader />
           ) : (
             <>
-              <MDBInput label="Search" className="mb-3" />
+              <MDBInput
+                label="Search"
+                className="mb-3"
+                onChange={(e) => setQuery(e.currentTarget.value)}
+              />
               <MDBTable responsive="sm" striped hover align="middle">
                 <MDBTableHead light>
                   <tr>
@@ -75,7 +88,7 @@ export default function AdminItems() {
                 </MDBTableHead>
                 <MDBTableBody>
                   {data &&
-                    data.products.map((product: Product) => (
+                    filteredProducts.map((product: Product) => (
                       <tr key={product._id}>
                         <td>
                           <MDBCheckbox />

@@ -5,7 +5,6 @@ import {
   MDBCardBody,
   MDBCardHeader,
   MDBInput,
-  MDBInputGroup,
   MDBTextArea,
 } from 'mdb-react-ui-kit';
 import { useMemo, useState } from 'react';
