@@ -1,4 +1,4 @@
-import { UserContext } from '@/context';
+import { IUserContext, UserContext } from '@/context';
 import { useNotification } from '@/hooks';
 import { MDBInput, MDBCheckbox, MDBBtn } from 'mdb-react-ui-kit';
 import { NextRouter } from 'next/router';
@@ -9,8 +9,7 @@ interface Props {
 }
 
 export function LogInForm({ router }: Props) {
-  // @ts-expect-error: ignore
-  const { login } = useContext(UserContext);
+  const { login } = useContext(UserContext) as IUserContext;
   const notification = useNotification();
 
   async function handleSubmit(e: FormEvent) {
