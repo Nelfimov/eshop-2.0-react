@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   addAddressesToOrder,
-  checkFields,
+  checkRefFields,
   copyShippingToBilling,
   createAddress,
   fetcherGetAuthorized,
@@ -128,7 +128,7 @@ export default function Checkout() {
       e.preventDefault();
       if (!order.data) return console.error(order);
       if (
-        !checkFields([
+        !checkRefFields([
           email,
           nameShipping,
           streetShipping,
