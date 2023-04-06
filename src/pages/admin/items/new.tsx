@@ -71,7 +71,7 @@ export default function NewItem() {
             onChange={handleChange}
           />
           <MDBRow>
-            <MDBCol>
+            <MDBCol md={3}>
               <MDBInput
                 className="mb-4"
                 label="Price"
@@ -80,7 +80,7 @@ export default function NewItem() {
                 onChange={handleChange}
               />
             </MDBCol>
-            <MDBCol>
+            <MDBCol md={3}>
               <MDBInput
                 className="mb-4"
                 label="Discount"
@@ -89,7 +89,7 @@ export default function NewItem() {
                 onChange={handleChange}
               />
             </MDBCol>
-            <MDBCol>
+            <MDBCol md={3}>
               <MDBInput
                 className="mb-4"
                 label="Delivery cost"
@@ -108,18 +108,19 @@ export default function NewItem() {
               ) : (
                 <MDBRow>
                   <MDBCol>
-                    <h3 className="m-0 text-end">
-                      <MDBTypography tag="s">
-                        {formatAsPrice(calculateTotalPrice)}
-                      </MDBTypography>
-                    </h3>
+                    <MDBTypography className="fw-bold fs-5" tag="s">
+                      {formatAsPrice(
+                        calculateTotalPrice + Number(formData.discount)
+                      )}
+                    </MDBTypography>
                   </MDBCol>
                   <MDBCol>
-                    <h3 className="m-0 text-end" style={{ color: 'red' }}>
-                      <MDBTypography>
-                        {formatAsPrice(calculateTotalPrice)}
-                      </MDBTypography>
-                    </h3>
+                    <MDBTypography
+                      className="fw-bold fs-5"
+                      style={{ color: 'red' }}
+                    >
+                      {formatAsPrice(calculateTotalPrice)}
+                    </MDBTypography>
                   </MDBCol>
                 </MDBRow>
               )}
