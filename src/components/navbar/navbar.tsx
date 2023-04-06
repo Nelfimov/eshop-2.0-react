@@ -34,7 +34,12 @@ export function Navbar() {
   if (!mounted) return null;
 
   return (
-    <MDBNavbar fixed="top" expand="xl" light bgColor="light">
+    <MDBNavbar
+      fixed="top"
+      expand={user?.isAdmin ? 'xl' : 'lg'}
+      light
+      bgColor="light"
+    >
       <MDBContainer breakpoint="lg">
         <MDBNavbarBrand href="#">JETZT IST DIE BESTE ZEIT</MDBNavbarBrand>
         <MDBNavbarToggler

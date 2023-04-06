@@ -1,4 +1,5 @@
 import { formatAsPrice } from '@/helpers';
+import { useNotification } from '@/hooks';
 import {
   MDBBtn,
   MDBCard,
@@ -9,10 +10,12 @@ import {
   MDBInput,
   MDBRow,
   MDBTextArea,
+  MDBTypography,
 } from 'mdb-react-ui-kit';
 import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
 
 export default function NewItem() {
+  const notification = useNotification();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -43,6 +46,8 @@ export default function NewItem() {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    notification?.open('Success', 'Product has been created');
   }
 
   return (
@@ -65,33 +70,61 @@ export default function NewItem() {
             name="description"
             onChange={handleChange}
           />
-          <MDBInput
-            className="mb-4"
-            label="Price"
-            type="number"
-            name="price"
-            onChange={handleChange}
-          />
-          <MDBInput
-            className="mb-4"
-            label="Discount"
-            type="number"
-            name="discount"
-            onChange={handleChange}
-          />
-          <MDBInput
-            className="mb-4"
-            label="Delivery cost"
-            type="number"
-            name="delivery"
-            onChange={handleChange}
-          />
-          <MDBInput
-            className="mb-4"
-            label="Total price"
-            disabled
-            value={formatAsPrice(calculateTotalPrice)}
-          />
+          <MDBRow>
+            <MDBCol>
+              <MDBInput
+                className="mb-4"
+                label="Price"
+                type="number"
+                name="price"
+                onChange={handleChange}
+              />
+            </MDBCol>
+            <MDBCol>
+              <MDBInput
+                className="mb-4"
+                label="Discount"
+                type="number"
+                name="discount"
+                onChange={handleChange}
+              />
+            </MDBCol>
+            <MDBCol>
+              <MDBInput
+                className="mb-4"
+                label="Delivery cost"
+                type="number"
+                name="delivery"
+                onChange={handleChange}
+              />
+            </MDBCol>
+            <MDBCol>
+              {formData.discount === '0' || formData.discount === '' ? (
+                <h3 className="m-0 text-end">
+                  <MDBTypography>
+                    {formatAsPrice(calculateTotalPrice)}
+                  </MDBTypography>
+                </h3>
+              ) : (
+                <MDBRow>
+                  <MDBCol>
+                    <h3 className="m-0 text-end">
+                      <MDBTypography tag="s">
+                        {formatAsPrice(calculateTotalPrice)}
+                      </MDBTypography>
+                    </h3>
+                  </MDBCol>
+                  <MDBCol>
+                    <h3 className="m-0 text-end" style={{ color: 'red' }}>
+                      <MDBTypography>
+                        {formatAsPrice(calculateTotalPrice)}
+                      </MDBTypography>
+                    </h3>
+                  </MDBCol>
+                </MDBRow>
+              )}
+            </MDBCol>
+          </MDBRow>
           <MDBInput
             className="mb-4"
             label="Stock"
@@ -115,15 +148,13 @@ export default function NewItem() {
           />
         </MDBCardBody>
         <MDBCardFooter>
-          <MDBRow center>
-            <MDBCol size={6}>
-              <MDBBtn
-                size="lg"
-                disabled={Object.values(formData).some((i) => i === '')}
-              >
-                Submit
-              </MDBBtn>
-            </MDBCol>
+          <MDBRow>
+            <MDBBtn
+              size="lg"
+              disabled={Object.values(formData).some((i) => i === '')}
+            >
+              Submit
+            </MDBBtn>
           </MDBRow>
         </MDBCardFooter>
       </form>
