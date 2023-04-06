@@ -34,7 +34,7 @@ export function Navbar() {
   if (!mounted) return null;
 
   return (
-    <MDBNavbar fixed="top" expand="lg" light bgColor="light">
+    <MDBNavbar fixed="top" expand="xl" light bgColor="light">
       <MDBContainer breakpoint="lg">
         <MDBNavbarBrand href="#">JETZT IST DIE BESTE ZEIT</MDBNavbarBrand>
         <MDBNavbarToggler
