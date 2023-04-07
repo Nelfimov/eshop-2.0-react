@@ -10,7 +10,7 @@ export function Layout({ children }: PropsWithChildren) {
         <MDBContainer
           breakpoint="lg"
           className="mt-5 mb-3"
-          style={{ minHeight: '80.5vh' }}
+          style={{ minHeight: '79.5vh' }}
         >
           {children}
         </MDBContainer>
