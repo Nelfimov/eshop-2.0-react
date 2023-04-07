@@ -47,12 +47,12 @@ export default function NewItem() {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    notification?.open('Success', 'Product has been created');
+    notification.open('Success', 'Product has been created');
   }
 
   return (
     <MDBCard>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <MDBCardHeader>
           <h1>Create new item form</h1>
         </MDBCardHeader>
