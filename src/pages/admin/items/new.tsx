@@ -70,6 +70,7 @@ export default function NewItem() {
             name="description"
             onChange={handleChange}
           />
+          <hr className="d-sm-block d-md-none" />
           <MDBRow>
             <MDBCol md={3}>
               <MDBInput
@@ -126,6 +127,7 @@ export default function NewItem() {
               )}
             </MDBCol>
           </MDBRow>
+          <hr className="d-sm-block d-md-none" />
           <MDBInput
             className="mb-4"
             label="Stock"
