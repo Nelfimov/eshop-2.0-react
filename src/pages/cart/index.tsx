@@ -20,7 +20,7 @@ import { ItemList, Loader } from '@/components';
 
 export default function Cart() {
   const cart = useContext(CartContext);
-  const url = `${process.env.backEndUrl}products?ids=${JSON.stringify(
+  const url = `${process.env.BACKEND_URL}/products?ids=${JSON.stringify(
     cart!.cartItems.map((item) => item.id)
   )}`;
   const { data, error, isLoading, isValidating } = useSWR(

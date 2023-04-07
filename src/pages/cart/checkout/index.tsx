@@ -52,11 +52,11 @@ export default function Checkout() {
     fetcherGetUnauthorized
   );
   const order = useSWR(
-    process.env.backEndUrl + 'orders/',
+    process.env.BACKEND_URL + '/orders',
     fetcherGetAuthorized
   );
   const address = useSWR(
-    process.env.backEndUrl + 'addresses/',
+    process.env.BACKEND_URL + '/addresses',
     fetcherGetAuthorized
   );
 

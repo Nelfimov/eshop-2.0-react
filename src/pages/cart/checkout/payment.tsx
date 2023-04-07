@@ -30,11 +30,11 @@ export default function Payment() {
   const [shippingDetails, setShippingDetails] = useState<ShippingInfo>();
 
   const order = useSWR(
-    process.env.backEndUrl + 'orders/',
+    process.env.BACKEND_URL + '/orders',
     fetcherGetAuthorized
   );
   const products = useSWR(
-    `${process.env.backEndUrl}products?ids=${JSON.stringify(
+    `${process.env.BACKEND_URL}/products?ids=${JSON.stringify(
       cart!.cartItems.map((item) => item.id)
     )}`,
     fetcherGetUnauthorized

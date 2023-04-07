@@ -10,7 +10,7 @@ import { NotificationProvider } from '@/context/notification';
 
 export default function App({ Component, pageProps }: AppProps) {
   const paypalOptions = {
-    'client-id': process.env.paypalClientId!,
+    'client-id': process.env.PAYPAL_CLIENT_ID as string,
     currency: 'EUR',
     intent: 'capture',
   };

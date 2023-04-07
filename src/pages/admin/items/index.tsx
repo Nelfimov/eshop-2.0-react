@@ -19,7 +19,7 @@ import useSWR from 'swr';
 export default function AdminItems() {
   const [query, setQuery] = useState('');
   const { data, error, isLoading, isValidating } = useSWR(
-    process.env.backEndUrl + 'products',
+    process.env.BACKEND_URL + '/products',
     fetcherGetAuthorized
   );
 

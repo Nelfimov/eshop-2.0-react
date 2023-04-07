@@ -12,7 +12,12 @@ export function AdminDropdown() {
   return (
     <MDBNavbarItem>
       <MDBDropdown>
-        <MDBDropdownToggle tag="a" className="nav-link" role="button">
+        <MDBDropdownToggle
+          color="link"
+          size="lg"
+          className="nav-link"
+          role="button"
+        >
           <MDBIcon icon="toolbox" className="me-1" size="lg" />
           Admin
         </MDBDropdownToggle>

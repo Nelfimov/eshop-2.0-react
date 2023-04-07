@@ -6,7 +6,7 @@ import { MDBCol, MDBRow } from 'mdb-react-ui-kit';
 
 export default function Products() {
   const { data, error, isLoading, isValidating } = useSWR(
-    process.env.backEndUrl + 'products',
+    process.env.BACKEND_URL + '/products',
     fetcherGetUnauthorized
   );
 

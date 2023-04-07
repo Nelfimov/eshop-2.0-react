@@ -16,7 +16,7 @@ import {
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
-import imageCompression from 'browser-image-compression';
+import imageCompression, { Options } from 'browser-image-compression';
 
 export default function NewItem() {
   const notification = useNotification();
@@ -25,11 +25,11 @@ export default function NewItem() {
     name: '',
     description: '',
     price: '',
-    discount: '',
-    delivery: '',
+    discount: '0',
+    delivery: '0',
     stock: '',
-    titleImage: '',
-    otherImages: '',
+    titleImage: {} as FileList,
+    otherImages: {} as FileList,
   });
 
   const calculateTotalPrice = useMemo(
@@ -44,34 +44,73 @@ export default function NewItem() {
   function handleChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
-    setFormData((prev) => {
-      return { ...prev, [e.target.name]: e.target.value };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]:
+        e.target.type === 'file' ? e.target.files : e.target.value,
+    }));
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (Object.values(formData).some((i) => i === '')) {
-      notification.open('Failure', 'Form is not filled fully', 'error');
+      return notification.open('Failure', 'Form is not filled fully', 'error');
     }
 
-    const headers = new Headers({
-      'Content-Type': 'application/json',
+    const options: Options = {
+      maxSizeMB: 0.2,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+
+    const compressedTitleImage = await imageCompression(
+      formData.titleImage[0],
+      options
+    );
+
+    const arrayOfFiles: Promise<File>[] = [];
+    for (let file of formData.otherImages) {
+      arrayOfFiles.push(imageCompression(file, options));
+    }
+
+    const result = await Promise.all(arrayOfFiles);
+
+    const body = new FormData();
+
+    Object.entries(formData).forEach((value) => {
+      const key = value[0].toString();
+      const v = value[1];
+      switch (v) {
+        case 'otherImages':
+          for (let i of result) {
+            body.append(`${key}[]`, i);
+          }
+          break;
+        case 'titleImage':
+          body.append(key, compressedTitleImage);
+          break;
+        default:
+          body.append(key, v.toString());
+      }
     });
 
+    const headers = new Headers({
+      'Content-Type': 'multipart/form-data',
+    });
     const data: Response = await (
-      await fetch(process.env.BACKEND_URL! + 'products', {
+      await fetch(process.env.BACKEND_URL + '/products', {
         method: 'POST',
         credentials: 'include',
         headers,
-        body: JSON.stringify(formData),
+        body,
       })
     ).json();
 
     if (data.success) {
       notification.open('Success', 'Product has been created');
-      return router.push(`/products/${data.product?._id}`);
+      router.push(`/products/${data.product?._id}`);
+      return;
     }
     notification.open(
       'Failure',
@@ -86,7 +125,7 @@ export default function NewItem() {
         <title>Create new product | Jetzt ist die beste Zeit</title>
       </Head>
       <MDBCard>
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <form onSubmit={handleSubmit}>
           <MDBCardHeader>
             <h1>Create new item form</h1>
           </MDBCardHeader>
@@ -97,12 +136,14 @@ export default function NewItem() {
               type="text"
               name="name"
               onChange={handleChange}
+              value={formData.name}
             />
             <MDBTextArea
               className="mb-4"
               label="Description"
               name="description"
               onChange={handleChange}
+              value={formData.description}
             />
             <hr className="d-sm-block d-md-none" />
             <MDBRow>
@@ -113,6 +154,7 @@ export default function NewItem() {
                   type="number"
                   name="price"
                   onChange={handleChange}
+                  value={formData.price}
                 />
               </MDBCol>
               <MDBCol md={3}>
@@ -122,6 +164,7 @@ export default function NewItem() {
                   type="number"
                   name="discount"
                   onChange={handleChange}
+                  value={formData.discount}
                 />
               </MDBCol>
               <MDBCol md={3}>
@@ -131,6 +174,7 @@ export default function NewItem() {
                   type="number"
                   name="delivery"
                   onChange={handleChange}
+                  value={formData.delivery}
                 />
               </MDBCol>
               <MDBCol>
@@ -168,6 +212,7 @@ export default function NewItem() {
               type="number"
               name="stock"
               onChange={handleChange}
+              value={formData.stock}
             />
             <label htmlFor="title-image">Title image: </label>
             <MDBInput
@@ -188,7 +233,7 @@ export default function NewItem() {
             <MDBRow>
               <MDBBtn
                 size="lg"
-                disabled={Object.values(formData).some((i) => i === '')}
+                disabled={Object.values(formData).some((i) => i.length < 1)}
               >
                 Submit
               </MDBBtn>

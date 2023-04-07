@@ -10,7 +10,7 @@ export default function Product() {
   const router = useRouter();
   const { data, error, isLoading, isValidating } = useSWR(
     router.isReady
-      ? `${process.env.backEndUrl}products/${router.query.id}`
+      ? `${process.env.BACKEND_URL}/products/${router.query.id}`
       : null,
     fetcherGetUnauthorized
   );

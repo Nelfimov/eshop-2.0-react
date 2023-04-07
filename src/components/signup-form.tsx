@@ -90,7 +90,7 @@ export function SignUpForm({ router }: Props) {
     ) as HTMLInputElement;
 
     const body = { email, password, secret };
-    const response = await fetch(process.env.backEndUrl + 'auth/register', {
+    const response = await fetch(process.env.BACKEND_URL + '/auth/register', {
       method: 'POST',
       credentials: 'include',
       headers: {
