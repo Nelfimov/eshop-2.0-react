@@ -52,71 +52,72 @@ export default function NewItem() {
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    if (Object.values(formData).some((i) => i === '')) {
-      return notification.open('Failure', 'Form is not filled fully', 'error');
-    }
-
-    const options: Options = {
-      maxSizeMB: 0.2,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-
-    const compressedTitleImage = await imageCompression(
-      formData.titleImage[0],
-      options
-    );
-
-    const arrayOfFiles: Promise<File>[] = [];
-    for (let file of formData.otherImages) {
-      arrayOfFiles.push(imageCompression(file, options));
-    }
-
-    const result = await Promise.all(arrayOfFiles);
-
-    const body = new FormData();
-
-    Object.entries(formData).forEach((value) => {
-      const key = value[0].toString();
-      const v = value[1];
-      switch (v) {
-        case 'otherImages':
-          for (let i of result) {
-            body.append(`${key}[]`, i);
-          }
-          break;
-        case 'titleImage':
-          body.append(key, compressedTitleImage);
-          break;
-        default:
-          body.append(key, v.toString());
+      if (Object.values(formData).some((i) => i === '')) {
+        notification.open('Failure', 'Form is not filled fully', 'error');
+        return;
       }
-    });
 
-    const headers = new Headers({
-      'Content-Type': 'multipart/form-data',
-    });
-    const data: Response = await (
-      await fetch(process.env.BACKEND_URL + '/products', {
-        method: 'POST',
-        credentials: 'include',
-        headers,
-        body,
-      })
-    ).json();
+      const options: Options = {
+        maxSizeMB: 0.2,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
 
-    if (data.success) {
-      notification.open('Success', 'Product has been created');
-      router.push(`/products/${data.product?._id}`);
-      return;
+      const compressedTitleImage = await imageCompression(
+        formData.titleImage[0],
+        options
+      );
+
+      const arrayOfFiles = [];
+      for (let file of formData.otherImages) {
+        arrayOfFiles.push(imageCompression(file, options));
+      }
+
+      const result = await Promise.all(arrayOfFiles);
+
+      const body = new FormData();
+
+      Object.entries(formData).forEach((value) => {
+        const key = value[0].toString();
+        const v = value[1];
+        switch (key) {
+          case 'otherImages':
+            for (let i of result) {
+              body.append(`${key}`, i);
+            }
+            break;
+          case 'titleImage':
+            body.append(key, compressedTitleImage);
+            break;
+          default:
+            body.append(key, v.toString());
+        }
+      });
+
+      const data: Response = await (
+        await fetch(process.env.BACKEND_URL + '/products', {
+          method: 'POST',
+          credentials: 'include',
+          body,
+        })
+      ).json();
+
+      if (data.success) {
+        notification.open('Success', 'Product has been created');
+        router.push(`/products/${data.product?._id}`);
+        return;
+      }
+      notification.open(
+        'Failure',
+        data.message ?? 'Could not create new product',
+        'error'
+      );
+    } catch (err) {
+      notification.open('Failure', err.toString(), 'error');
     }
-    notification.open(
-      'Failure',
-      data.message ?? 'Could not create new product',
-      'error'
-    );
   }
 
   return (

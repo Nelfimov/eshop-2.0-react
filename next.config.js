@@ -13,6 +13,11 @@ const nextConfig = {
         hostname: 'loremflickr.com',
         pathname: '**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        pathname: '**',
+      },
     ],
   },
 };
