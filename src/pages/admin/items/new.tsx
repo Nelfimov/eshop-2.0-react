@@ -1,5 +1,6 @@
 import { formatAsPrice } from '@/helpers';
 import { useNotification } from '@/hooks';
+import { Response } from '@/types';
 import {
   MDBBtn,
   MDBCard,
@@ -13,10 +14,13 @@ import {
   MDBTypography,
 } from 'mdb-react-ui-kit';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+import imageCompression from 'browser-image-compression';
 
 export default function NewItem() {
   const notification = useNotification();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -56,14 +60,24 @@ export default function NewItem() {
       'Content-Type': 'application/json',
     });
 
-    const res = await fetch(process.env.BACKEND_URL! + 'products', {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-      body: JSON.stringify(formData),
-    });
+    const data: Response = await (
+      await fetch(process.env.BACKEND_URL! + 'products', {
+        method: 'POST',
+        credentials: 'include',
+        headers,
+        body: JSON.stringify(formData),
+      })
+    ).json();
 
-    notification.open('Success', 'Product has been created');
+    if (data.success) {
+      notification.open('Success', 'Product has been created');
+      return router.push(`/products/${data.product?._id}`);
+    }
+    notification.open(
+      'Failure',
+      data.message ?? 'Could not create new product',
+      'error'
+    );
   }
 
   return (

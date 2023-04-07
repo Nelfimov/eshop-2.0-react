@@ -1,6 +1,7 @@
 import { Address } from './address';
 import { Order } from './order';
 import { User } from './user';
+import { Product } from './product';
 
 export interface Response {
   success: boolean;
@@ -8,4 +9,5 @@ export interface Response {
   order?: Order;
   address?: Address;
   user?: User;
+  product?: Product;
 }
