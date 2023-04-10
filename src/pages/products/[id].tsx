@@ -5,13 +5,13 @@ import { MDBCard } from 'mdb-react-ui-kit';
 import { Product as IProduct } from '@/types';
 import { fetcherGetUnauthorized } from '@/helpers';
 import { Loader, ProductBodyImages, ProductHeader } from '@/components';
+import { useUser } from '@/hooks';
 
 export default function Product() {
-  const router = useRouter();
+  const { isAdmin } = useUser();
+  const { isReady, query } = useRouter();
   const { data, error, isLoading, isValidating } = useSWR(
-    router.isReady
-      ? `${process.env.BACKEND_URL}/products/${router.query.id}`
-      : null,
+    isReady ? `${process.env.BACKEND_URL}/products/${query.id}` : null,
     fetcherGetUnauthorized
   );
   const product: IProduct = !isLoading && data?.product;
@@ -20,7 +20,7 @@ export default function Product() {
     <>
       <Head>
         <title>{`${
-          product?.name ?? 'Loading'
+          product.name ?? 'Loading'
         } | Jetzt ist die beste Zeit Online Shop`}</title>
       </Head>
       <MDBCard>
@@ -30,7 +30,7 @@ export default function Product() {
         ) : (
           data && (
             <>
-              <ProductHeader product={product} />
+              <ProductHeader product={product} isAdmin={isAdmin} />
               <ProductBodyImages product={product} />
             </>
           )

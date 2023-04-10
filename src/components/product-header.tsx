@@ -15,9 +15,10 @@ import { CartContext } from '@/context';
 
 interface Props {
   product: IProduct;
+  isAdmin: boolean;
 }
 
-export function ProductHeader({ product }: Props) {
+export function ProductHeader({ product, isAdmin }: Props) {
   const cart = useContext(CartContext);
 
   function isInCart() {
