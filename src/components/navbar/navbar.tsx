@@ -14,16 +14,17 @@ import {
   MDBInputGroup,
 } from 'mdb-react-ui-kit';
 import { useContext, useEffect, useState } from 'react';
-import { CartContext, UserContext } from '@/context';
+import { CartContext } from '@/context';
 import { useRouter } from 'next/router';
 import { AdminDropdown } from './admin';
+import { useUser } from '@/hooks';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const user = useContext(UserContext);
+  const { isAdmin, id, logout } = useUser();
   const cart = useContext(CartContext);
-  const router = useRouter();
+  const { pathname } = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -34,12 +35,7 @@ export function Navbar() {
   if (!mounted) return null;
 
   return (
-    <MDBNavbar
-      fixed="top"
-      expand={user?.isAdmin ? 'xl' : 'lg'}
-      light
-      bgColor="light"
-    >
+    <MDBNavbar fixed="top" expand={isAdmin ? 'xl' : 'lg'} light bgColor="light">
       <MDBContainer breakpoint="lg">
         <MDBNavbarBrand href="#">JETZT IST DIE BESTE ZEIT</MDBNavbarBrand>
         <MDBNavbarToggler
@@ -62,13 +58,11 @@ export function Navbar() {
                 </MDBInputGroup>
               </form>
             </MDBNavbarItem>
-            {user?.isAdmin ? <AdminDropdown /> : null}
+            {isAdmin ? <AdminDropdown /> : null}
             <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
               <Link
                 href="/"
-                className={`nav-link ${
-                  router.pathname === '/' ? 'active' : ''
-                }`}
+                className={`nav-link ${pathname === '/' ? 'active' : ''}`}
               >
                 <MDBIcon className="me-1" icon="home" />
                 Home
@@ -78,7 +72,7 @@ export function Navbar() {
               <Link
                 href="/products"
                 className={`nav-link ${
-                  router.pathname === '/products' ? 'active' : ''
+                  pathname === '/products' ? 'active' : ''
                 }`}
               >
                 <MDBIcon className="me-1" icon="book-open" />
@@ -89,7 +83,7 @@ export function Navbar() {
               <Link
                 href="/cart"
                 className={`nav-link d-flex align-items-center ${
-                  router.pathname === '/cart' ? 'active' : ''
+                  pathname === '/cart' ? 'active' : ''
                 }`}
               >
                 {cart!.itemCount > 0 ? (
@@ -100,12 +94,10 @@ export function Navbar() {
               </Link>
             </MDBNavbarItem>
             <MDBNavbarItem onClick={() => setShowNavToggler(false)}>
-              {user!.id === '' ? (
+              {id === '' ? (
                 <Link
                   href="/auth"
-                  className={`nav-link ${
-                    router.pathname === '/auth' ? 'active' : ''
-                  }`}
+                  className={`nav-link ${pathname === '/auth' ? 'active' : ''}`}
                 >
                   <MDBIcon className="me-1" icon="sign-in-alt" />
                   Authorize
@@ -121,11 +113,9 @@ export function Navbar() {
                       }
                     );
                     const data = await response.json();
-                    if (data.success) user!.logout();
+                    if (data.success) logout();
                   }}
-                  className={`nav-link ${
-                    router.pathname === '/auth' ? 'active' : ''
-                  }`}
+                  className={`nav-link ${pathname === '/auth' ? 'active' : ''}`}
                 >
                   <MDBIcon className="me-1" icon="sign-in-alt" />
                   Logout
