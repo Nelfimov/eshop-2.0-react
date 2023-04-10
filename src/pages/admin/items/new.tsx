@@ -42,12 +42,14 @@ export default function NewItem() {
   );
 
   function handleChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]:
-        e.target.type === 'file' ? e.target.files : e.target.value,
+      [event.target.name]:
+        event.target.type === 'file'
+          ? (event.target as HTMLInputElement).files
+          : event.target.value,
     }));
   }
 
@@ -86,11 +88,24 @@ export default function NewItem() {
         switch (key) {
           case 'otherImages':
             for (let i of result) {
-              body.append(`${key}`, i);
+              body.append(
+                `${key}`,
+                i,
+                `${new Date().toISOString()}-other-${result.indexOf(
+                  i
+                )}${formData.name.replace(' ', '')}.${i.type.split('/')[1]}`
+              );
             }
             break;
           case 'titleImage':
-            body.append(key, compressedTitleImage);
+            body.append(
+              key,
+              compressedTitleImage,
+              `${new Date().toISOString()}-title-${formData.name.replace(
+                ' ',
+                ''
+              )}.${compressedTitleImage.type.split('/')[1]}`
+            );
             break;
           default:
             body.append(key, v.toString());
@@ -115,7 +130,7 @@ export default function NewItem() {
         data.message ?? 'Could not create new product',
         'error'
       );
-    } catch (err) {
+    } catch (err: any) {
       notification.open('Failure', err.toString(), 'error');
     }
   }
