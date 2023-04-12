@@ -15,8 +15,6 @@ export default function Products() {
   const products =
     !isLoading && !isValidating && data ? data.products : undefined;
 
-  console.log(products);
-
   return (
     <>
       <Head>

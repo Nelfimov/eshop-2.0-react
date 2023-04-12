@@ -34,13 +34,16 @@ import {
   MDBInput,
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
-import { useUser } from '@/hooks';
+import { useNotification, useUser } from '@/hooks';
 
 export default function Checkout() {
+  const { open } = useNotification();
   const { push } = useRouter();
   const user = useUser();
   const [modalOrderWithAddress, setModalOrderWithAddress] = useState(false);
   const [modalPreviousAddress, setModalPreviousAddress] = useState(false);
+  const shippingAddress = useRef<Address>();
+  const billingAddress = useRef<Address>();
   const toggleShow = useCallback(
     (action: Dispatch<SetStateAction<boolean>>, state: boolean) =>
       action(!state),
@@ -59,39 +62,38 @@ export default function Checkout() {
     fetcherGetAuthorized
   );
 
-  const applyAddresses = useCallback(
-    () =>
-      addAddressesToOrder(
-        order.data.order.id,
-        address.data &&
-          address.data.addresses.find(
-            (address: Address) => address.type === 'billing'
-          ),
-        address.data &&
-          address.data.addresses.find(
-            (address: Address) => address.type === 'billing'
-          )
-      ),
-    [order.isLoading, address.isLoading]
-  );
+  const applyAddresses = useCallback(() => {
+    if (
+      !order.data ||
+      !order.data.order ||
+      !address.data ||
+      !address.data.addresses
+    )
+      return;
+
+    shippingAddress.current = address.data.addresses.find(
+      (address) => address.type === 'billing'
+    );
+    billingAddress.current = address.data.addresses.find(
+      (address) => address.type === 'billing'
+    );
+    if (!shippingAddress.current || !billingAddress.current) return;
+    addAddressesToOrder(
+      order.data.order.id,
+      shippingAddress.current,
+      billingAddress.current
+    );
+  }, [order.isLoading, address.isLoading]);
 
   useMemo(() => {
     if (
-      !address.isLoading &&
-      !address.isValidating &&
-      address.data &&
-      address.data.addresses
-    ) {
-      if (address.data.addresses.length > 0) {
-        setModalPreviousAddress(true);
-      }
-    }
-  }, [address.isLoading]);
-
-  useMemo(() => {
-    if (order.isLoading || !order.data || order.error || !order.data.success)
+      order.isLoading ||
+      order.isValidating ||
+      !order.data ||
+      !order.data.order
+    )
       return;
-    const loadedOrder: Order = order.data.order;
+    const loadedOrder = order.data.order;
     if (loadedOrder.addressShipping && loadedOrder.addressBilling)
       setModalOrderWithAddress(true);
   }, [order.isLoading]);
@@ -130,7 +132,8 @@ export default function Checkout() {
   async function handleSubmit(e: FormEvent) {
     try {
       e.preventDefault();
-      if (!order.data) return console.error(order);
+      if (!order.data || !order.data.order)
+        return open('Failure', 'Order has not been found', 'error');
       if (
         !checkRefFields([
           email,
@@ -148,7 +151,7 @@ export default function Checkout() {
       )
         return;
 
-      if (user?.id === '') {
+      if (user.id === '') {
         const reg = await registerAnonUser(user);
         if (!reg) return;
       }
@@ -174,18 +177,21 @@ export default function Checkout() {
         }),
       ]);
 
-      const orderID: string = order.data.order._id;
+      if (!shippingAddress.address || !billingAddress.address)
+        throw Error('Addresses have not been posted');
+
+      const orderID = order.data.order._id;
 
       const result = await addAddressesToOrder(
         orderID,
-        shippingAddress.address!,
-        billingAddress.address!
+        shippingAddress.address,
+        billingAddress.address
       );
 
-      if (!result.success) return console.error(result.message);
+      if (!result.success) throw Error(result.message);
       push('/cart/checkout/payment');
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      open('Failure', err.toString(), 'error');
     }
   }
 
@@ -194,7 +200,7 @@ export default function Checkout() {
       <Head>
         <title>Checkout | Jetzt ist die beste Zeit</title>
       </Head>
-      {modalOrderWithAddress && (
+      {modalOrderWithAddress && order.data && order.data.order && (
         <CheckoutModal
           showAction={() =>
             toggleShow(setModalOrderWithAddress, modalOrderWithAddress)
@@ -204,11 +210,11 @@ export default function Checkout() {
           content={
             'Your order already contains addresses. Would you like to continue with it?'
           }
-          addressBilling={order.data && order.data.order.addressBilling}
-          addressShipping={order.data && order.data.order.addressShipping}
+          addressBilling={order.data.order.addressBilling}
+          addressShipping={order.data.order.addressShipping}
         />
       )}
-      {modalPreviousAddress && (
+      {modalPreviousAddress && address.data && address.data.addresses && (
         <CheckoutModal
           showAction={() =>
             toggleShow(setModalPreviousAddress, modalPreviousAddress)
@@ -219,16 +225,14 @@ export default function Checkout() {
             'We have found your previous address you used for ordering. Would you like to use it again?'
           }
           addressBilling={
-            address.data &&
             address.data.addresses.find(
               (address: Address) => address.type === 'billing'
-            )
+            )!
           }
           addressShipping={
-            address.data &&
             address.data.addresses.find(
               (address: Address) => address.type === 'shipping'
-            )
+            )!
           }
           action={applyAddresses}
         />
@@ -261,7 +265,7 @@ export default function Checkout() {
                   <h2>Delivery address</h2>
                   <CheckoutForm
                     name="delivery"
-                    data={countriesList.data}
+                    data={countriesList.data as [] | undefined}
                     refs={[
                       nameShipping,
                       streetShipping,
@@ -289,7 +293,7 @@ export default function Checkout() {
                   <h2>Billing address</h2>
                   <CheckoutForm
                     name="billing"
-                    data={countriesList.data}
+                    data={countriesList.data as [] | undefined}
                     refs={[
                       nameBilling,
                       streetBilling,

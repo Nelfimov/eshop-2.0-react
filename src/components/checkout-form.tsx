@@ -2,7 +2,7 @@ import { MDBValidationItem, MDBInput } from 'mdb-react-ui-kit';
 
 interface Props {
   name: string;
-  data: [];
+  data: [] | undefined;
   refs: any[];
 }
 
@@ -53,18 +53,18 @@ export function CheckoutForm({ name, data, refs }: Props) {
         invalid
         className="mb-3 pb-1"
       >
-        <select
-          className="form-control"
-          name={`${name}-country`}
-          ref={refs[3]}
-          defaultValue=""
-          required
-        >
-          <option value="" disabled>
-            Select country
-          </option>
-          {data &&
-            data
+        {data ? (
+          <select
+            className="form-control"
+            name={`${name}-country`}
+            ref={refs[3]}
+            defaultValue=""
+            required
+          >
+            <option value="" disabled>
+              Select country
+            </option>
+            {data
               .sort((a: any, b: any) =>
                 a.name.common.localeCompare(b.name.common)
               )
@@ -73,7 +73,10 @@ export function CheckoutForm({ name, data, refs }: Props) {
                   {country.flag + ' ' + country.name.common}
                 </option>
               ))}
-        </select>
+          </select>
+        ) : (
+          <MDBInput type="text" name={`${name}-contry`} ref={refs[3]} />
+        )}
       </MDBValidationItem>
       <MDBValidationItem
         feedback="ZIP has to be a number"
