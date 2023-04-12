@@ -24,19 +24,19 @@ export default function AdminItems() {
   );
 
   const filteredProducts = useMemo(() => {
-    if (!data) return;
+    if (!data || !data.products) return;
     return data.products.filter((product: Product) =>
       product.name.toLowerCase().includes(query.toLowerCase())
     );
   }, [data, query]);
 
-  if (error)
+  if (error || !filteredProducts)
     return (
       <>
         <Head>
-          <title>Cart | Jetzt ist die beste Zeit</title>
+          <title>Admin | Items | Jetzt ist die beste Zeit</title>
         </Head>
-        <h1>Failed to load cart</h1>
+        <h1>Failed to load items</h1>
       </>
     );
 
@@ -87,30 +87,29 @@ export default function AdminItems() {
                   </tr>
                 </MDBTableHead>
                 <MDBTableBody>
-                  {data &&
-                    filteredProducts.map((product: Product) => (
-                      <tr key={product._id}>
-                        <td>
-                          <MDBCheckbox />
-                        </td>
-                        <td>
-                          <Link href={`/products/${product._id}`}>
-                            {product._id}
-                          </Link>
-                        </td>
-                        <td>
-                          <Link href={`/products/${product._id}`}>
-                            {product.name}
-                          </Link>
-                        </td>
-                        <td align="right">{product.quantityOnStock}</td>
-                        <td align="right">{formatAsPrice(product.price)}</td>
-                        <td align="right">
-                          {formatAsPrice(product.deliveryPrice)}
-                        </td>
-                        <td align="right">{formatAsPrice(product.discount)}</td>
-                      </tr>
-                    ))}
+                  {filteredProducts.map((product: Product) => (
+                    <tr key={product._id}>
+                      <td>
+                        <MDBCheckbox />
+                      </td>
+                      <td>
+                        <Link href={`/products/${product._id}`}>
+                          {product._id}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link href={`/products/${product._id}`}>
+                          {product.name}
+                        </Link>
+                      </td>
+                      <td align="right">{product.quantityOnStock}</td>
+                      <td align="right">{formatAsPrice(product.price)}</td>
+                      <td align="right">
+                        {formatAsPrice(product.deliveryPrice)}
+                      </td>
+                      <td align="right">{formatAsPrice(product.discount)}</td>
+                    </tr>
+                  ))}
                 </MDBTableBody>
               </MDBTable>
             </>
