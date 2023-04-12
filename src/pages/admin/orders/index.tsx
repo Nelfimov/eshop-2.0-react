@@ -1,5 +1,5 @@
 import { Loader } from '@/components';
-import { fetcherGetAuthorized, formatAsPrice } from '@/helpers';
+import { fetcherGetAuthorized } from '@/helpers';
 import {
   MDBCard,
   MDBCardBody,
@@ -18,14 +18,14 @@ import useSWR from 'swr';
 export default function AdminOrders() {
   const [query, setQuery] = useState('');
   const { data, error, isLoading, isValidating } = useSWR(
-    process.env.BACKEND_URL + '/orders',
+    process.env.BACKEND_URL + '/admin/orders',
     fetcherGetAuthorized
   );
 
   const filteredOrders = useMemo(() => {
-    if (!data || !data.products) return;
-    return data.products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
+    if (!data || !data.orders) return;
+    return data.orders.filter((order) =>
+      order.user.email.toLowerCase().includes(query.toLowerCase())
     );
   }, [data, query]);
 
@@ -46,7 +46,7 @@ export default function AdminOrders() {
       </Head>
       <MDBCard>
         <MDBCardHeader>
-          <h1>Items</h1>
+          <h1>Orders</h1>
         </MDBCardHeader>
         <MDBCardBody>
           {isLoading || isValidating ? (
@@ -70,43 +70,55 @@ export default function AdminOrders() {
                     >
                       id
                     </th>
-                    <th scope="col">Name</th>
+                    <th scope="col">User</th>
                     <th style={{ textAlign: 'right' }} scope="col">
-                      On stock
+                      Status
                     </th>
                     <th style={{ textAlign: 'right' }} scope="col">
-                      Price
+                      Is ordered
                     </th>
                     <th style={{ textAlign: 'right' }} scope="col">
-                      Delivery cost
+                      Payment
                     </th>
                     <th style={{ textAlign: 'right' }} scope="col">
-                      Discount
+                      Shipping address
+                    </th>
+                    <th style={{ textAlign: 'right' }} scope="col">
+                      Billing address
+                    </th>
+                    <th style={{ textAlign: 'right' }} scope="col">
+                      Created at
+                    </th>
+                    <th style={{ textAlign: 'right' }} scope="col">
+                      Updated at
                     </th>
                   </tr>
                 </MDBTableHead>
                 <MDBTableBody>
-                  {filteredOrders.map((product) => (
-                    <tr key={product._id}>
+                  {filteredOrders.map((order) => (
+                    <tr key={order._id}>
                       <td>
                         <MDBCheckbox />
                       </td>
                       <td>
-                        <Link href={`/products/${product._id}`}>
-                          {product._id}
+                        <Link href={`/admin/orders/${order._id}`}>
+                          {order._id}
                         </Link>
                       </td>
                       <td>
-                        <Link href={`/products/${product._id}`}>
-                          {product.name}
+                        <Link href={`/admin/users/${order.user._id}`}>
+                          {order.user.isAnon
+                            ? order.user._id
+                            : order.user.email}
                         </Link>
                       </td>
-                      <td align="right">{product.quantityOnStock}</td>
-                      <td align="right">{formatAsPrice(product.price)}</td>
-                      <td align="right">
-                        {formatAsPrice(product.deliveryPrice)}
-                      </td>
-                      <td align="right">{formatAsPrice(product.discount)}</td>
+                      <td align="right">{order.status}</td>
+                      <td align="right">{order.isOrdered}</td>
+                      <td align="right">{order.payment}</td>
+                      <td align="right">{order.addressShipping}</td>
+                      <td align="right">{order.addressBilling}</td>
+                      <td align="right">{order.createdAt.toISOString()}</td>
+                      <td align="right">{order.updatedAt.toISOString()}</td>
                     </tr>
                   ))}
                 </MDBTableBody>

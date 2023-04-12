@@ -8,6 +8,7 @@ export interface Response {
   success: boolean;
   message?: string;
   order?: Order;
+  orders?: Order[];
   address?: Address;
   addresses?: Address[];
   user?: User;

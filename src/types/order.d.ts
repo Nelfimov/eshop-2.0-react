@@ -2,7 +2,6 @@ import { User } from './user';
 
 export interface Order {
   _id: string;
-  id: string;
   user: User;
   isOrdered: boolean;
   payment?: Payment | string;
