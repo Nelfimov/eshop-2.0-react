@@ -10,8 +10,7 @@ import {
   MDBIcon,
 } from 'mdb-react-ui-kit';
 import { CartItem, Product as IProduct } from '@/types';
-import { useContext } from 'react';
-import { CartContext } from '@/context';
+import { useCart } from '@/hooks';
 
 interface Props {
   product: IProduct;
@@ -19,10 +18,10 @@ interface Props {
 }
 
 export function ProductHeader({ product, isAdmin }: Props) {
-  const cart = useContext(CartContext);
+  const { cartItems, increase, decrease, addToCart } = useCart();
 
   function isInCart() {
-    return !!cart!.cartItems.find((item: CartItem) => item.id === product._id);
+    return !!cartItems.find((item: CartItem) => item.id === product._id);
   }
 
   return (
@@ -57,7 +56,7 @@ export function ProductHeader({ product, isAdmin }: Props) {
                 <MDBBtn
                   className="m-1 flex-fill"
                   color="info"
-                  onClick={() => cart?.increase(product)}
+                  onClick={() => increase(product)}
                 >
                   <MDBIcon className="me-1" icon="cart-plus" />
                   Add 1 more
@@ -67,7 +66,7 @@ export function ProductHeader({ product, isAdmin }: Props) {
                 <MDBBtn
                   className="m-1 flex-fill"
                   color="danger"
-                  onClick={() => cart?.decrease(product)}
+                  onClick={() => decrease(product)}
                 >
                   <MDBIcon className="me-1" icon="cart-plus" />
                   Decrease by 1
@@ -78,7 +77,7 @@ export function ProductHeader({ product, isAdmin }: Props) {
             <MDBBtn
               className="m-1"
               color="success"
-              onClick={() => cart?.addToCart(product)}
+              onClick={() => addToCart(product)}
             >
               <MDBIcon className="me-1" icon="cart-plus" />
               Add to cart

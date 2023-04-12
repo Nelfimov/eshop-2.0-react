@@ -1,13 +1,14 @@
 import { IUserContext } from '@/context';
 import { Address, Response } from '@/types';
+import { Fetcher } from 'swr';
 
-export const fetcherGetUnauthorized = (url: string) =>
+export const fetcherGetUnauthorized: Fetcher<Response, string> = (url) =>
   fetch(url).then((res) => res.json());
 
-export const fetcherGetAuthorized = (url: string) =>
+export const fetcherGetAuthorized: Fetcher<Response, string> = (url) =>
   fetch(url, { credentials: 'include' }).then((res) => res.json());
 
-export const fetcherPostAuthorized = (url: string) =>
+export const fetcherPostAuthorized: Fetcher<Response, string> = (url) =>
   fetch(url, { method: 'POST', credentials: 'include' }).then((res) =>
     res.json()
   );

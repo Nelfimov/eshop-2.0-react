@@ -1,9 +1,8 @@
-import { CartContext } from '@/context';
 import { formatAsPrice } from '@/helpers';
+import { useCart } from '@/hooks';
 import { Product } from '@/types';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import Link from 'next/link';
-import { useContext } from 'react';
 
 interface Props {
   product: Product;
@@ -12,7 +11,7 @@ interface Props {
 }
 
 export function ItemList({ product, index, quantity }: Props) {
-  const cart = useContext(CartContext);
+  const { increase, decrease, removeFromCart } = useCart();
 
   return (
     <tr>
@@ -24,7 +23,7 @@ export function ItemList({ product, index, quantity }: Props) {
         <MDBBtn
           className="p-1 me-1"
           color="danger"
-          onClick={() => cart!.decrease(product)}
+          onClick={() => decrease(product)}
         >
           <MDBIcon icon="minus" />
         </MDBBtn>
@@ -32,7 +31,7 @@ export function ItemList({ product, index, quantity }: Props) {
         <MDBBtn
           className="p-1 ms-1"
           color="success"
-          onClick={() => cart!.increase(product)}
+          onClick={() => increase(product)}
         >
           <MDBIcon icon="plus" />
         </MDBBtn>
@@ -43,7 +42,7 @@ export function ItemList({ product, index, quantity }: Props) {
         <MDBBtn
           className="p-1 ms-1"
           color="warning"
-          onClick={() => cart!.removeFromCart(product)}
+          onClick={() => removeFromCart(product)}
         >
           <MDBIcon icon="trash" />
         </MDBBtn>

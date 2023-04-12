@@ -1,6 +1,6 @@
-import { UserContext } from '@/context';
 import { validateEmail } from '@/helpers';
-import { useNotification } from '@/hooks';
+import { useNotification, useUser } from '@/hooks';
+import { Response } from '@/types';
 import {
   MDBInput,
   MDBBtn,
@@ -8,68 +8,79 @@ import {
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
 import { NextRouter } from 'next/router';
-import React, { FormEvent, useContext, useState } from 'react';
+import {
+  FormEvent,
+  useState,
+  ChangeEvent,
+  useRef,
+  useEffect,
+  useMemo,
+} from 'react';
 
 interface Props {
   router: NextRouter;
 }
 
 export function SignUpForm({ router }: Props) {
-  const [formInput, setFormInput] = useState({
+  const initialState = {
     email: '',
     password: '',
     confirmPassword: '',
     secret: '',
-  });
-  const [errors, setErrors] = useState({});
-  const notification = useNotification();
-  const user = useContext(UserContext);
+  };
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setErrors({});
-    const { name, value } = e.target;
+  const [formInput, setFormInput] = useState(initialState);
+  const [errors, setErrors] = useState({ email: '', password: '' });
+  const { open } = useNotification();
+  const { login } = useUser();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
     setFormInput((prev) => {
       return { ...prev, [name]: value };
     });
   }
 
+  useEffect(() => {
+    emailRef.current?.setCustomValidity(errors.email);
+    passwordRef.current?.setCustomValidity(errors.password);
+    confirmPasswordRef.current?.setCustomValidity(errors.password);
+  }, [errors]);
+
+  useMemo(() => {
+    handleValidation();
+  }, [formInput]);
+
   function handleValidation() {
     let formIsValid = true;
-    let errors: { [key: string]: string } = {};
+    let errors = {
+      email: '',
+      password: '',
+    };
 
     if (!formInput.email) {
       formIsValid = false;
-      errors['email'] = 'Cannot be empty.';
+      errors.email = 'Cannot be empty.';
     }
+
+    console.log('Pass: ' + formInput.password);
+    console.log('ConPass: ' + formInput.confirmPassword);
 
     if (!validateEmail(formInput.email)) {
       formIsValid = false;
-      errors['email'] = 'Should be a valid email address.';
-      const email = document.getElementById('email') as HTMLInputElement;
-      email.setCustomValidity(errors['email']);
-    }
-    if (formInput.password !== formInput.confirmPassword) {
-      formIsValid = false;
-      errors['password'] = 'Passwords should match.';
-      const password = document.getElementById('password') as HTMLInputElement;
-      password.setCustomValidity(errors['password']);
-      const confirmPassword = document.getElementById(
-        'password'
-      ) as HTMLInputElement;
-      confirmPassword.setCustomValidity(errors['password']);
+      errors.email = 'Should be a valid email address.';
     }
     if (formInput.password.length < 5 || formInput.confirmPassword.length < 5) {
       formIsValid = false;
-      errors['password'] = 'Passwords should be longer than 5 symbols.';
-      const password = document.getElementById(
-        'confirmPassword'
-      ) as HTMLInputElement;
-      password.setCustomValidity(errors['password']);
-      const confirmPassword = document.getElementById(
-        'confirmPassword'
-      ) as HTMLInputElement;
-      confirmPassword.setCustomValidity(errors['password']);
+      errors.password = 'Passwords should be longer than 5 symbols.';
+    } else if (formInput.password !== formInput.confirmPassword) {
+      formIsValid = false;
+      errors.password = 'Passwords should match.';
     }
+    console.log(errors);
     setErrors(errors);
     return formIsValid;
   }
@@ -79,49 +90,44 @@ export function SignUpForm({ router }: Props) {
 
     if (!handleValidation()) return;
 
-    const { value: email } = document.getElementById(
-      'email'
-    ) as HTMLInputElement;
-    const { value: password } = document.getElementById(
-      'password'
-    ) as HTMLInputElement;
-    const { value: secret } = document.getElementById(
-      'secret'
-    ) as HTMLInputElement;
-
-    const body = { email, password, secret };
-    const response = await fetch(process.env.BACKEND_URL + '/auth/register', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    const data = await response.json();
-    if (!data.success) {
-      notification?.open('Error', data.message, 'error');
+    const body = {
+      email: formInput.email,
+      password: formInput.password,
+      secret: formInput.secret,
+    };
+    const data: Response = await (
+      await fetch(process.env.BACKEND_URL + '/auth/register', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+    ).json();
+    if (!data.success || !data.user) {
+      open('Error', data.message ?? 'Unknown error', 'error');
       return;
     }
 
-    notification?.open('Success', 'Succesfully logged in');
-    user?.login({ ...data.user });
+    open('Success', 'Succesfully logged in');
+    login({ ...data.user });
     router.push('/');
   }
 
   return (
-    <MDBValidation onSubmit={handleSubmit}>
+    <MDBValidation onSubmit={handleSubmit} isValidated>
       <h1 className="mb-4">Sign Up</h1>
       <MDBValidationItem
-        // @ts-expect-error: expect
-        feedback={errors['email']}
-        invalid
+        feedback={errors.email}
+        invalid={errors.email.length > 0}
         className="mb-3 pb-1"
       >
         <MDBInput
           type="email"
           name="email"
           id="email"
+          ref={emailRef}
           value={formInput.email}
           label="Email address"
           minLength={5}
@@ -130,15 +136,15 @@ export function SignUpForm({ router }: Props) {
         />
       </MDBValidationItem>
       <MDBValidationItem
-        // @ts-expect-error: ignore
-        feedback={errors['password']}
+        feedback={errors.password}
         className="mb-3 pb-1"
-        invalid
+        invalid={errors.password.length > 0}
       >
         <MDBInput
           type="password"
           name="password"
           id="password"
+          ref={passwordRef}
           value={formInput.password}
           label="Password"
           onChange={handleChange}
@@ -146,41 +152,40 @@ export function SignUpForm({ router }: Props) {
         />
       </MDBValidationItem>
       <MDBValidationItem
-        // @ts-expect-error: ignore
-        feedback={errors['password']}
+        feedback={errors.password}
         className="mb-3 pb-1"
-        invalid
+        invalid={errors.password.length > 0}
       >
         <MDBInput
           type="password"
           name="confirmPassword"
           id="confirmPassword"
+          ref={confirmPasswordRef}
           value={formInput.confirmPassword}
           label="Confirm password"
           onChange={handleChange}
           required
         />
       </MDBValidationItem>
-      <MDBValidationItem
-        // @ts-expect-error: ignore
-        feedback={errors['secret']}
-        className="mb-3 pb-1"
-        invalid
-      >
-        <MDBInput
-          type="password"
-          name="secret"
-          id="secret"
-          value={formInput.secret}
-          label="Secret"
-          onChange={handleChange}
-          required
-        />
-      </MDBValidationItem>
+      <MDBInput
+        type="password"
+        name="secret"
+        id="secret"
+        value={formInput.secret}
+        label="Secret"
+        onChange={handleChange}
+        required
+      />
       <MDBBtn
         className="w-100 my-3"
         type="submit"
-        disabled={Object.keys(errors).length > 0}
+        disabled={
+          Object.values(errors).some((item) => item.length > 1) ||
+          Object.entries(formInput).some(([key, value]) => {
+            if (key !== 'secret') return value.length < 1;
+            return false;
+          })
+        }
       >
         Sign up
       </MDBBtn>

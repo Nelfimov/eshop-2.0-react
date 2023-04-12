@@ -13,17 +13,16 @@ import {
   MDBBadge,
   MDBInputGroup,
 } from 'mdb-react-ui-kit';
-import { useContext, useEffect, useState } from 'react';
-import { CartContext } from '@/context';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { AdminDropdown } from './admin';
-import { useUser } from '@/hooks';
+import { useCart, useUser } from '@/hooks';
 
 export function Navbar() {
   const [showNavToggler, setShowNavToggler] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { isAdmin, id, logout } = useUser();
-  const cart = useContext(CartContext);
+  const { itemCount } = useCart();
   const { pathname } = useRouter();
 
   useEffect(() => {
@@ -86,8 +85,8 @@ export function Navbar() {
                   pathname === '/cart' ? 'active' : ''
                 }`}
               >
-                {cart!.itemCount > 0 ? (
-                  <MDBBadge color="danger">{cart!.itemCount}</MDBBadge>
+                {itemCount > 0 ? (
+                  <MDBBadge color="danger">{itemCount}</MDBBadge>
                 ) : null}
                 <MDBIcon className="me-1" icon="shopping-cart" />
                 Cart

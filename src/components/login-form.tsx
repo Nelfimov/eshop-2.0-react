@@ -1,16 +1,15 @@
-import { IUserContext, UserContext } from '@/context';
-import { useNotification } from '@/hooks';
+import { useNotification, useUser } from '@/hooks';
 import { MDBInput, MDBCheckbox, MDBBtn } from 'mdb-react-ui-kit';
 import { NextRouter } from 'next/router';
-import { FormEvent, useContext } from 'react';
+import { FormEvent } from 'react';
 
 interface Props {
   router: NextRouter;
 }
 
 export function LogInForm({ router }: Props) {
-  const { login } = useContext(UserContext) as IUserContext;
-  const notification = useNotification();
+  const { login } = useUser();
+  const { open } = useNotification();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -37,11 +36,11 @@ export function LogInForm({ router }: Props) {
     });
     const data = await response.json();
     if (!data.success) {
-      notification?.open('Error', data.message, 'error');
+      open('Error', data.message, 'error');
       return;
     }
     login({ ...data.user });
-    notification?.open('Success', 'Successfully logged in');
+    open('Success', 'Successfully logged in');
     router.push('/');
   }
 

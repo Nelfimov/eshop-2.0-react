@@ -2,7 +2,6 @@ import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { MDBCard } from 'mdb-react-ui-kit';
-import { Product as IProduct } from '@/types';
 import { fetcherGetUnauthorized } from '@/helpers';
 import { Loader, ProductBodyImages, ProductHeader } from '@/components';
 import { useUser } from '@/hooks';
@@ -14,18 +13,19 @@ export default function Product() {
     isReady ? `${process.env.BACKEND_URL}/products/${query.id}` : null,
     fetcherGetUnauthorized
   );
-  const product: IProduct = !isLoading && data?.product;
+  const product =
+    !isLoading && !isValidating && data ? data.product : undefined;
 
   return (
     <>
       <Head>
         <title>{`${
-          product.name ?? 'Loading'
+          product ? product.name : 'Loading'
         } | Jetzt ist die beste Zeit Online Shop`}</title>
       </Head>
       <MDBCard>
         {error && <h1>Product not found</h1>}
-        {isLoading || isValidating ? (
+        {!product ? (
           <Loader />
         ) : (
           data && (

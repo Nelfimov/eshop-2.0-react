@@ -12,7 +12,6 @@ import Head from 'next/head';
 import useSWR from 'swr';
 import { CheckoutForm, CheckoutModal, Loader } from '@/components';
 import {
-  useContext,
   useRef,
   FormEvent,
   useState,
@@ -22,7 +21,6 @@ import {
   useCallback,
 } from 'react';
 import { useRouter } from 'next/router';
-import { UserContext } from '@/context';
 import { Address, Order, Response } from '@/types';
 import {
   MDBBtn,
@@ -36,10 +34,11 @@ import {
   MDBInput,
   MDBValidationItem,
 } from 'mdb-react-ui-kit';
+import { useUser } from '@/hooks';
 
 export default function Checkout() {
-  const router = useRouter();
-  const user = useContext(UserContext);
+  const { push } = useRouter();
+  const user = useUser();
   const [modalOrderWithAddress, setModalOrderWithAddress] = useState(false);
   const [modalPreviousAddress, setModalPreviousAddress] = useState(false);
   const toggleShow = useCallback(
@@ -77,7 +76,12 @@ export default function Checkout() {
   );
 
   useMemo(() => {
-    if (!address.isLoading && address.data && address.data.success) {
+    if (
+      !address.isLoading &&
+      !address.isValidating &&
+      address.data &&
+      address.data.addresses
+    ) {
       if (address.data.addresses.length > 0) {
         setModalPreviousAddress(true);
       }
@@ -179,7 +183,7 @@ export default function Checkout() {
       );
 
       if (!result.success) return console.error(result.message);
-      router.push('/cart/checkout/payment');
+      push('/cart/checkout/payment');
     } catch (err) {
       console.error(err);
     }
@@ -196,7 +200,7 @@ export default function Checkout() {
             toggleShow(setModalOrderWithAddress, modalOrderWithAddress)
           }
           show={modalOrderWithAddress}
-          redirect={() => router.push('/cart/checkout/payment')}
+          redirect={() => push('/cart/checkout/payment')}
           content={
             'Your order already contains addresses. Would you like to continue with it?'
           }
@@ -210,7 +214,7 @@ export default function Checkout() {
             toggleShow(setModalPreviousAddress, modalPreviousAddress)
           }
           show={modalPreviousAddress}
-          redirect={() => router.push('/cart/checkout/payment')}
+          redirect={() => push('/cart/checkout/payment')}
           content={
             'We have found your previous address you used for ordering. Would you like to use it again?'
           }
