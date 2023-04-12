@@ -7,7 +7,7 @@ import { useState, useRef } from 'react';
 export default function Auth() {
   const [showSignUp, setShowSignUp] = useState(true);
   const router = useRouter();
-  const signUp = useRef(null);
+  const signUp = useRef<HTMLInputElement>(null);
 
   return (
     <>
