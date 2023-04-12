@@ -25,14 +25,14 @@ export function AdminDropdown() {
           <MDBDropdownItem header>
             <MDBIcon fas icon="sitemap" />
             Products
-            <MDBDropdownItem link>
-              <Link href="/admin/items/new" className="nav-link p-0">
+            <MDBDropdownItem>
+              <Link href="/admin/items/new" className="nav-link">
                 <MDBIcon fas icon="plus" className="me-1" size="lg" />
                 Create new item
               </Link>
             </MDBDropdownItem>
-            <MDBDropdownItem link>
-              <Link href="/admin/items" className="nav-link p-0">
+            <MDBDropdownItem>
+              <Link href="/admin/items" className="nav-link">
                 <MDBIcon fas icon="ellipsis-v" className="me-1" size="lg" />
                 List all
               </Link>
@@ -41,8 +41,8 @@ export function AdminDropdown() {
           <MDBDropdownItem header>
             <MDBIcon fas icon="handshake" className="me-1" size="lg" />
             Orders
-            <MDBDropdownItem link>
-              <Link href="/admin/orders" className="nav-link p-0">
+            <MDBDropdownItem>
+              <Link href="/admin/orders" className="nav-link">
                 <MDBIcon fas icon="ellipsis-v" className="me-1" size="lg" />
                 List all
               </Link>
@@ -51,8 +51,8 @@ export function AdminDropdown() {
           <MDBDropdownItem header>
             <MDBIcon fas icon="images" className="me-1" size="lg" />
             Carousel
-            <MDBDropdownItem link>
-              <Link href="/admin/carousel" className="nav-link p-0">
+            <MDBDropdownItem>
+              <Link href="/admin/carousel" className="nav-link">
                 <MDBIcon fas icon="edit" className="me-1" size="lg" />
                 Edit
               </Link>
