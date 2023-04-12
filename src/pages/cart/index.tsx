@@ -12,16 +12,16 @@ import {
 } from 'mdb-react-ui-kit';
 import Link from 'next/link';
 import Head from 'next/head';
-import { useContext, useEffect } from 'react';
-import { CartContext } from '@/context';
+import { useEffect } from 'react';
 import { CartItem, Product } from '@/types';
 import { fetcherGetUnauthorized, formatAsPrice } from '@/helpers';
 import { ItemList, Loader } from '@/components';
+import { useCart } from '@/hooks';
 
 export default function Cart() {
-  const cart = useContext(CartContext);
+  const cart = useCart();
   const url = `${process.env.BACKEND_URL}/products?ids=${JSON.stringify(
-    cart!.cartItems.map((item) => item.id)
+    cart.cartItems.map((item) => item.id)
   )}`;
   const { data, error, isLoading, isValidating } = useSWR(
     url,
@@ -29,9 +29,8 @@ export default function Cart() {
   );
 
   useEffect(() => {
-    !isLoading && cart!.updatePrices(data.products);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    !isLoading && data && data.products && cart.updatePrices(data.products);
+  }, [cart, data, isLoading]);
 
   if (error)
     return (
@@ -92,13 +91,14 @@ export default function Cart() {
                 </MDBTableHead>
                 <MDBTableBody>
                   {data &&
+                    data.products &&
                     data.products.map((product: Product, index: number) => (
                       <ItemList
                         key={product._id}
                         product={product}
                         index={index + 1}
                         quantity={
-                          cart!.cartItems.filter(
+                          cart.cartItems.filter(
                             (item: CartItem) => item.id === product._id
                           )[0].quantity
                         }
@@ -110,14 +110,14 @@ export default function Cart() {
                     <td colSpan={5} align="right">
                       Total items:
                     </td>
-                    <td align="center">{formatAsPrice(cart!.totalItems)}</td>
+                    <td align="center">{formatAsPrice(cart.totalItems)}</td>
                   </tr>
                   <tr className="table-secondary">
                     <td colSpan={5} align="right">
                       Total discounts:
                     </td>
                     <td align="center">
-                      -{formatAsPrice(cart!.totalDiscounts)}
+                      -{formatAsPrice(cart.totalDiscounts)}
                     </td>
                   </tr>
                   <tr className="table-secondary">
@@ -125,21 +125,21 @@ export default function Cart() {
                       Total shipping:
                     </td>
                     <td align="center">
-                      +{formatAsPrice(cart!.totalShippings)}
+                      +{formatAsPrice(cart.totalShippings)}
                     </td>
                   </tr>
                   <tr className="table-info fw-bold">
                     <td colSpan={5} align="right">
                       TOTAL:
                     </td>
-                    <td align="center">{formatAsPrice(cart!.totalCart)}</td>
+                    <td align="center">{formatAsPrice(cart.totalCart)}</td>
                   </tr>
                 </tfoot>
               </MDBTable>
             )}
           </MDBCardBody>
         )}
-        {cart!.itemCount > 0 && (
+        {cart.itemCount > 0 && (
           <MDBCardFooter>
             <MDBRow className="row-cols-1 row-cols-sm-2 g-4">
               <Link href="/" className="d-flex">
