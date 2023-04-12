@@ -15,34 +15,34 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 
-export default function AdminItems() {
+export default function AdminOrders() {
   const [query, setQuery] = useState('');
   const { data, error, isLoading, isValidating } = useSWR(
-    process.env.BACKEND_URL + '/products',
+    process.env.BACKEND_URL + '/orders',
     fetcherGetAuthorized
   );
 
-  const filteredProducts = useMemo(() => {
+  const filteredOrders = useMemo(() => {
     if (!data || !data.products) return;
     return data.products.filter((product) =>
       product.name.toLowerCase().includes(query.toLowerCase())
     );
   }, [data, query]);
 
-  if (error || !filteredProducts)
+  if (error || !filteredOrders)
     return (
       <>
         <Head>
-          <title>Admin | Items | Jetzt ist die beste Zeit</title>
+          <title>Admin | Orders | Jetzt ist die beste Zeit</title>
         </Head>
-        <h1>Failed to load items</h1>
+        <h1>Failed to load orders</h1>
       </>
     );
 
   return (
     <>
       <Head>
-        <title>Admin | Items | Jetzt ist die beste Zeit</title>
+        <title>Admin | Orders | Jetzt ist die beste Zeit</title>
       </Head>
       <MDBCard>
         <MDBCardHeader>
@@ -86,7 +86,7 @@ export default function AdminItems() {
                   </tr>
                 </MDBTableHead>
                 <MDBTableBody>
-                  {filteredProducts.map((product) => (
+                  {filteredOrders.map((product) => (
                     <tr key={product._id}>
                       <td>
                         <MDBCheckbox />
