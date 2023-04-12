@@ -14,18 +14,17 @@ import {
 } from '@paypal/paypal-js/types/apis/orders';
 import Head from 'next/head';
 import useSWR from 'swr';
-import { useContext, useMemo, useState } from 'react';
-import { CartContext } from '@/context';
+import { useMemo, useState } from 'react';
 import { CartSnippet, Loader } from '@/components';
 import { Address, Product } from '@/types';
 import { useRouter } from 'next/router';
-import { useNotification } from '@/hooks';
+import { useCart, useNotification } from '@/hooks';
 
 export default function Payment() {
-  const notification = useNotification();
-  const router = useRouter();
+  const { open } = useNotification();
+  const { push } = useRouter();
   const [{ isPending }] = usePayPalScriptReducer();
-  const cart = useContext(CartContext);
+  const cart = useCart();
   const [cartItems, setCartItems] = useState<PurchaseItem[]>();
   const [shippingDetails, setShippingDetails] = useState<ShippingInfo>();
 
@@ -41,13 +40,19 @@ export default function Payment() {
   );
 
   useMemo(() => {
-    if (!products.isLoading && products.data && products.data.success) {
+    if (
+      !products.isLoading &&
+      !order.isValidating &&
+      products.data &&
+      products.data.success &&
+      products.data.products
+    ) {
       cart!.updatePrices(products.data.products);
       const productsArray: Product[] = products.data.products;
 
       const result: PurchaseItem[] = productsArray.map((item) => {
         const quantity =
-          cart!.cartItems.find((_) => item.id === _.id)?.quantity.toString() ??
+          cart.cartItems.find((_) => item.id === _.id)?.quantity.toString() ??
           '0';
         return {
           name: item.name,
@@ -65,7 +70,13 @@ export default function Payment() {
   }, [products.isLoading]);
 
   useMemo(() => {
-    if (!order.isLoading && order.data && order.data.success) {
+    if (
+      !order.isLoading &&
+      !order.isValidating &&
+      order.data &&
+      order.data.success &&
+      order.data.order
+    ) {
       const orderAddress: Address | undefined =
         order.data.order.addressShipping;
       if (!orderAddress) return;
@@ -116,6 +127,7 @@ export default function Payment() {
                 <Loader />
               ) : (
                 <PayPalButtons
+                  forceReRender={[shippingDetails]}
                   createOrder={(data, action) => {
                     console.log('Total cart: ' + cart!.totalCart);
                     console.log('    Total items: ' + cart!.totalItems);
@@ -133,18 +145,18 @@ export default function Payment() {
                         purchase_units: [
                           {
                             amount: {
-                              value: cart!.totalCart.toString(),
+                              value: cart.totalCart.toString(),
                               breakdown: {
                                 item_total: {
-                                  value: cart!.totalItems.toString(),
+                                  value: cart.totalItems.toString(),
                                   currency_code: 'EUR',
                                 },
                                 shipping: {
-                                  value: cart!.totalShippings.toString(),
+                                  value: cart.totalShippings.toString(),
                                   currency_code: 'EUR',
                                 },
                                 discount: {
-                                  value: cart!.totalDiscounts.toString(),
+                                  value: cart.totalDiscounts.toString(),
                                   currency_code: 'EUR',
                                 },
                               },
@@ -200,7 +212,7 @@ export default function Payment() {
                             },
                             credentials: 'include',
                             body: JSON.stringify({
-                              cartItems: cart?.cartItems.map((item) => {
+                              cartItems: cart.cartItems.map((item) => {
                                 return { id: item.id, quantity: item.quantity };
                               }),
                             }),
@@ -214,30 +226,30 @@ export default function Payment() {
                           }
                         );
                         cart!.clearCart();
-                        notification?.open(
+                        open(
                           'Success',
                           'Your order has been paid and placed. We will contact you soon for delivery info.'
                         );
-                        router.push('/');
+                        push('/');
                       }
                     });
                   }}
                   onCancel={(data, actions) => {
                     return actions.redirect();
                   }}
-                  disabled={!shippingDetails || cart!.totalCart === 0}
+                  disabled={!shippingDetails || cart.totalCart === 0}
                 />
               )}
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
         <MDBCol size={4}>
-          {products.data && (
+          {products.data && products.data.products && cart && (
             <CartSnippet
               products={products.data.products}
-              total={cart!.totalCart.toString()}
-              count={cart!.itemCount}
-              cart={cart!}
+              total={cart.totalCart.toString()}
+              count={cart.itemCount}
+              cart={cart}
             />
           )}
         </MDBCol>
