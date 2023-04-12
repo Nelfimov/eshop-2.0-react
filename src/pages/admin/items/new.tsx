@@ -19,8 +19,8 @@ import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
 import imageCompression, { Options } from 'browser-image-compression';
 
 export default function NewItem() {
-  const notification = useNotification();
-  const router = useRouter();
+  const { open } = useNotification();
+  const { push } = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -58,7 +58,7 @@ export default function NewItem() {
       e.preventDefault();
 
       if (Object.values(formData).some((i) => i === '')) {
-        notification.open('Failure', 'Form is not filled fully', 'error');
+        open('Failure', 'Form is not filled fully', 'error');
         return;
       }
 
@@ -121,17 +121,13 @@ export default function NewItem() {
       ).json();
 
       if (data.success) {
-        notification.open('Success', 'Product has been created');
-        router.push(`/products/${data.product?._id}`);
+        open('Success', 'Product has been created');
+        push(`/products/${data.product?._id}`);
         return;
       }
-      notification.open(
-        'Failure',
-        data.message ?? 'Could not create new product',
-        'error'
-      );
+      open('Failure', data.message ?? 'Could not create new product', 'error');
     } catch (err: any) {
-      notification.open('Failure', err.toString(), 'error');
+      open('Failure', err.toString(), 'error');
     }
   }
 
