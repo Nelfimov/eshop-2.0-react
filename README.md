@@ -1,4 +1,4 @@
-[DEPRECATED] Active at https://github.com/Nelfimov/eshop-fullstack
+:no_entry: [DEPRECATED] Active at https://github.com/Nelfimov/eshop-fullstack
 
 # Front end client for Eshop
 
