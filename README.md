@@ -1,3 +1,5 @@
+[DEPRECATED] Active at https://github.com/Nelfimov/eshop-fullstack
+
 # Front end client for Eshop
 
 Client for [Eshop backend](https://github.com/Nelfimov/eshop-2.0).
